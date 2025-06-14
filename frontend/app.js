@@ -1,19 +1,25 @@
-document.getElementById('searchForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const query = document.getElementById('searchInput').value;
+document
+  .getElementById("searchForm")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const query = document.getElementById("searchInput").value;
 
-  const results = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-  const data = await results.json();
+    try {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const results = await response.json();
 
-  const resultsDiv = document.getElementById('results');
-  resultsDiv.innerHTML = '';
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = ""; // clear previous results
 
-  data.forEach(listing => {
-    const link = document.createElement('a');
-    link.href = listing.url;
-    link.textContent = listing.title;
-    link.target = '_blank';
-    resultsDiv.appendChild(link);
-    resultsDiv.appendChild(document.createElement('br'));
+      results.forEach((item) => {
+        const link = document.createElement("a");
+        link.href = item.link;
+        link.target = "_blank";
+        link.textContent = `${item.title} (${item.site})`;
+        resultsDiv.appendChild(link);
+        resultsDiv.appendChild(document.createElement("br"));
+      });
+    } catch (err) {
+      console.error("Search failed", err);
+    }
   });
-});
