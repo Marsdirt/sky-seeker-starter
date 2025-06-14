@@ -1,7 +1,17 @@
 services:
   - type: web
-    name: sky-seeker-api
+    name: sky-seeker-backend
     env: node
-    rootDir: backend
-    buildCommand: npm install
-    startCommand: node server.js
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node server.js
+    autoDeploy: true
+
+  - type: web
+    name: sky-seeker-frontend
+    env: static
+    plan: free
+    staticPublishPath: frontend
+    buildCommand: ""
+    startCommand: ""
+    autoDeploy: true
