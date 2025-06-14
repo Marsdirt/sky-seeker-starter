@@ -10,7 +10,6 @@ services:
   - type: web
     name: sky-seeker-frontend
     env: static
-    plan: free
     staticPublishPath: frontend
     buildCommand: ""
     startCommand: ""
