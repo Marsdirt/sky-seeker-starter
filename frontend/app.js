@@ -5,7 +5,8 @@ document
     const query = document.getElementById("searchInput").value;
 
     try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+     const response = await fetch(`https://sky-seeker-backend.onrender.com/api/search?q=${encodeURIComponent(query)}`);
+
       const results = await response.json();
 
       const resultsDiv = document.getElementById("results");
