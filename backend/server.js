@@ -1,29 +1,28 @@
-import express from "express";
-import cors from "cors";
-
+// server.js (Example using Express)
+const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3001;
+const port = 3000;
 
-app.use(cors());
-
-app.get("/api/search", (req, res) => {
-  const query = req.query.q;
-
-  const results = [
-    {
-      title: `Test listing for "${query}"`,
-      link: "https://example.com/aircraft-listing",
-      site: "Example Site"
-    }
+// Assume you have a search function
+const performSearch = (query) => {
+  // Your search logic here
+  // This function should return an array of search results
+  console.log(`Searching for: ${query}`);
+  return [
+    { title: 'Result 1', link: 'link1', site: 'site1' },
+    { title: 'Result 2', link: 'link2', site: 'site2' }
   ];
+};
 
+app.get('/api/search', (req, res) => {
+  const query = req.query.q;
+  if (!query) {
+    return res.status(400).json({ error: 'Missing search query' });
+  }
+  const results = performSearch(query);
   res.json(results);
 });
 
-app.get("/", (req, res) => {
-  res.send("Backend is running.");
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
