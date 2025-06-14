@@ -9,7 +9,7 @@ document
       const results = await response.json();
 
       const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = ""; // clear previous results
+      resultsDiv.innerHTML = "";
 
       results.forEach((item) => {
         const link = document.createElement("a");
@@ -17,7 +17,6 @@ document
         link.target = "_blank";
         link.textContent = `${item.title} (${item.site})`;
         resultsDiv.appendChild(link);
-        resultsDiv.appendChild(document.createElement("br"));
       });
     } catch (err) {
       console.error("Search failed", err);
