@@ -6,7 +6,6 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 
-// ✅ Fake search endpoint
 app.get("/api/search", (req, res) => {
   const query = req.query.q;
 
