@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: sky-seeker
+    env: node
+    region: oregon # Choose your preferred region e.g. oregon, frankfurt
+    plan: free # Or your preferred plan
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20 # Or the version specified in package.json engines
+      # Add any other environment variables your app needs here
+      # Example:
+      # - key: API_KEY
+      #   value: your_api_key_here
