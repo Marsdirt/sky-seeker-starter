@@ -4,7 +4,6 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-// import { FilterPanel } from '@/components/FilterPanel'; // Original alias import
 import { FilterPanel } from '../components/FilterPanel'; // Changed to relative path
 import { ListingsGrid } from '@/components/ListingsGrid';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
