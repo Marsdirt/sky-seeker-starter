@@ -2,7 +2,8 @@
   name: sky-seeker-backend
   env: node
   plan: free
-  buildCommand: npm install
-  startCommand: npm start
-  branch: main
-  rootDir: backend
+  buildCommand: cd backend && npm install
+  startCommand: cd backend && npm start
+  envVars:
+    - key: NODE_ENV
+      value: production
