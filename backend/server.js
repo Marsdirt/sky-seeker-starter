@@ -23,6 +23,8 @@ app.get('/api/search', (req, res) => {
   res.json(results);
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
+
