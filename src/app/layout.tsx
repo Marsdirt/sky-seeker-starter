@@ -18,10 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`}>
       <head>
-        {/* Google Fonts links are kept as per guidelines, though Next/Font is also used */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+        {/* Google Font links for Inter are removed as next/font/google handles it. */}
       </head>
       <body className="font-body antialiased">
         {children}
