@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 import path from 'path'; // Ensure path module is imported
 
@@ -14,6 +15,7 @@ const nextConfig: NextConfig = {
     ],
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Add path aliases
     config.resolve.alias = {
       ...(config.resolve.alias || {}), // Ensure alias object exists
       '@': path.resolve(__dirname, './src'),
