@@ -1,31 +1,35 @@
 const express = require('express');
 const cors = require('cors');
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// Sample search route
+// Sample route to handle aircraft search
 app.get('/api/search', (req, res) => {
-  const query = req.query.q?.toLowerCase() || '';
-
-  const sampleResults = [
-    { title: 'Cessna 172 Skyhawk', url: 'https://example.com/cessna-172' },
-    { title: 'Piper Cherokee 140', url: 'https://example.com/piper-cherokee' },
-    { title: 'Beechcraft Bonanza', url: 'https://example.com/bonanza' }
+  const query = req.query.q?.toLowerCase();
+  const fakeResults = [
+    {
+      id: 1,
+      title: 'Cessna 172 for sale',
+      location: 'Dallas, TX',
+      url: 'https://example.com/listing/1'
+    },
+    {
+      id: 2,
+      title: 'Piper Cherokee 180 available',
+      location: 'Orlando, FL',
+      url: 'https://example.com/listing/2'
+    }
   ];
 
-  const results = sampleResults.filter(item =>
-    item.title.toLowerCase().includes(query)
-  );
+  // Filter fake results if a search query is provided
+  const results = query
+    ? fakeResults.filter(item => item.title.toLowerCase().includes(query))
+    : fakeResults;
 
   res.json(results);
-});
-
-app.get('/', (req, res) => {
-  res.send('Sky-Seeker API is running!');
 });
 
 app.listen(PORT, () => {
