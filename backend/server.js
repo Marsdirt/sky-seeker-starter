@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Root test route
+// Root route — just for testing
 app.get('/', (req, res) => {
   res.json([
     { city: "Almaty, KZ" },
@@ -19,23 +19,25 @@ app.get('/', (req, res) => {
   ]);
 });
 
-// 🆕 Search route for aircraft
+// ✅ New route to handle search
 app.get('/api/search', (req, res) => {
-  const query = req.query.q?.toLowerCase();
+  const query = req.query.q?.toLowerCase() || '';
 
-  // Dummy search result (you can replace with real search logic later)
   const sampleResults = [
     {
-      title: `Cessna 172 for Sale - ${query}`,
+      title: `Cessna 172 Skyhawk`,
       url: 'https://example.com/cessna-172'
     },
     {
-      title: `Piper Cherokee near you - ${query}`,
+      title: `Piper Cherokee 140`,
       url: 'https://example.com/piper-cherokee'
+    },
+    {
+      title: `Beechcraft Bonanza`,
+      url: 'https://example.com/bonanza'
     }
   ];
 
-  // Filter sample results by keyword
   const results = sampleResults.filter(item =>
     item.title.toLowerCase().includes(query)
   );
