@@ -1,29 +1,25 @@
 const express = require('express');
-const cors = require('cors');
-
+const cors = require('cors'); // Allow requests from your frontend
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.json());
 
-// Dummy route to simulate search results
+// Example /api/search route
 app.get('/api/search', (req, res) => {
-  const query = req.query.q?.toLowerCase() || '';
-  const results = [
-    { id: 1, title: 'Cessna 172 Skyhawk for sale', location: 'Dallas, TX', url: '#' },
-    { id: 2, title: 'Piper PA-28 Cherokee', location: 'Orlando, FL', url: '#' },
-    { id: 3, title: 'Diamond DA40 XLS', location: 'Phoenix, AZ', url: '#' },
-  ];
-
-  const filtered = results.filter(item =>
-    item.title.toLowerCase().includes(query)
-  );
-
-  res.json(filtered);
+  const query = req.query.q;
+  if (!query) {
+    return res.status(400).json({ error: "Missing search query" });
+  }
+  // For now, just return a dummy result
+  res.json([
+    {
+      title: `Sample result for "${query}"`,
+      url: `https://example.com/search?q=${encodeURIComponent(query)}`
+    }
+  ]);
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Backend server running on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });
-
