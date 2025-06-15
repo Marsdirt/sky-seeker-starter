@@ -1,38 +1,29 @@
 const express = require('express');
 const cors = require('cors');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// Sample route to handle aircraft search
+// Dummy route to simulate search results
 app.get('/api/search', (req, res) => {
-  const query = req.query.q?.toLowerCase();
-  const fakeResults = [
-    {
-      id: 1,
-      title: 'Cessna 172 for sale',
-      location: 'Dallas, TX',
-      url: 'https://example.com/listing/1'
-    },
-    {
-      id: 2,
-      title: 'Piper Cherokee 180 available',
-      location: 'Orlando, FL',
-      url: 'https://example.com/listing/2'
-    }
+  const query = req.query.q?.toLowerCase() || '';
+  const results = [
+    { id: 1, title: 'Cessna 172 Skyhawk for sale', location: 'Dallas, TX', url: '#' },
+    { id: 2, title: 'Piper PA-28 Cherokee', location: 'Orlando, FL', url: '#' },
+    { id: 3, title: 'Diamond DA40 XLS', location: 'Phoenix, AZ', url: '#' },
   ];
 
-  // Filter fake results if a search query is provided
-  const results = query
-    ? fakeResults.filter(item => item.title.toLowerCase().includes(query))
-    : fakeResults;
+  const filtered = results.filter(item =>
+    item.title.toLowerCase().includes(query)
+  );
 
-  res.json(results);
+  res.json(filtered);
 });
 
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`✅ Backend server running on port ${PORT}`);
 });
 
