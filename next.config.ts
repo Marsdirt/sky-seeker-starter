@@ -1,13 +1,8 @@
 import type {NextConfig} from 'next';
+import path from 'path';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  typescript: {
-    // ignoreBuildErrors: true, // Removed to allow TS errors to surface
-  },
-  eslint: {
-    // ignoreDuringBuilds: true, // Removed for stricter build checks
-  },
   images: {
     remotePatterns: [
       {
@@ -17,6 +12,17 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+  },
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}), // Ensure alias object exists
+      '@': path.resolve(__dirname, './src'),
+      '@/components': path.resolve(__dirname, './src/components'),
+      '@/lib': path.resolve(__dirname, './src/lib'),
+      '@/hooks': path.resolve(__dirname, './src/hooks'),
+      '@/types': path.resolve(__dirname, './src/types'),
+    };
+    return config;
   },
 };
 
