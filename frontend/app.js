@@ -1,25 +1,30 @@
-document
-  .getElementById("searchForm")
-  .addEventListener("submit", async (e) => {
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('searchForm');
+  const input = document.getElementById('searchInput');
+  const resultsDiv = document.getElementById('results');
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const query = document.getElementById("searchInput").value;
+    const query = input.value.trim();
+    if (!query) return;
+
+    resultsDiv.innerHTML = 'Searching...';
 
     try {
-     const response = await fetch(`https://sky-seeker-backend.onrender.com/api/search?q=${encodeURIComponent(query)}`);
+      const res = await fetch(`https://sky-seeker-backend.onrender.com/api/search?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
 
-      const results = await response.json();
-
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = "";
-
-      results.forEach((item) => {
-        const link = document.createElement("a");
-        link.href = item.link;
-        link.target = "_blank";
-        link.textContent = `${item.title} (${item.site})`;
-        resultsDiv.appendChild(link);
-      });
+      if (data.length === 0) {
+        resultsDiv.innerHTML = 'No results found.';
+      } else {
+        resultsDiv.innerHTML = data.map(item =>
+          `<p><a href="${item.url}" target="_blank">${item.title}</a></p>`
+        ).join('');
+      }
     } catch (err) {
       console.error("Search failed", err);
+      resultsDiv.innerHTML = 'Error during search.';
     }
   });
+});
+
