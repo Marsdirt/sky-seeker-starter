@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: sky-seeker
+    name: sky-seeker # Make sure this matches your service name on Render
     env: node
     region: oregon # Choose your preferred region e.g. oregon, frankfurt
     plan: free # Or your preferred plan
@@ -8,7 +8,7 @@ services:
     startCommand: npm start
     envVars:
       - key: NODE_VERSION
-        value: 20 # Or the version specified in package.json engines
+        value: "20" # Or the specific Node.js version you prefer, e.g., "20.11.0"
       # Add any other environment variables your app needs here
       # Example:
       # - key: API_KEY
