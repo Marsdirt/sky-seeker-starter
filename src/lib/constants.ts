@@ -1,0 +1,131 @@
+import type { AircraftListing, SearchFilters } from '@/types';
+
+export const AIRCRAFT_TYPES: string[] = [
+  'All Types',
+  'Single Engine Piston',
+  'Multi Engine Piston',
+  'Turboprop',
+  'Jet',
+  'Helicopter',
+  'Experimental/Kit',
+  'Light Sport (LSA)',
+  'Warbird/Antique',
+  'Bush Plane',
+  'Amphibious/Float',
+];
+
+export const INITIAL_FILTERS: SearchFilters = {
+  brand: '',
+  model: '',
+  type: 'All Types',
+  minPrice: '',
+  maxPrice: '',
+  location: '',
+};
+
+const generateDataAiHint = (brand: string, model: string): string => {
+  return `${brand} ${model}`.toLowerCase().replace(/[^a-z0-9\s]/gi, '').split(' ').slice(0,2).join(' ') || 'aircraft plane';
+};
+
+export const PLACEHOLDER_LISTINGS: AircraftListing[] = [
+  {
+    id: '1',
+    brand: 'Cessna',
+    model: '172 Skyhawk',
+    type: 'Single Engine Piston',
+    price: 150000,
+    location: 'Wichita, KS',
+    description: 'Classic and reliable trainer/personal aircraft. Low hours, great condition.',
+    imageUrl: 'https://placehold.co/600x400.png',
+    listingUrl: '#',
+    source: 'Barnstormers',
+    isExternal: false,
+    dataAiHint: generateDataAiHint('Cessna', '172 Skyhawk'),
+  },
+  {
+    id: '2',
+    brand: 'Piper',
+    model: 'Cherokee PA-28',
+    type: 'Single Engine Piston',
+    price: 85000,
+    location: 'Vero Beach, FL',
+    description: 'Well-maintained Piper Cherokee, perfect for VFR cruising and flight training.',
+    imageUrl: 'https://placehold.co/600x400.png',
+    listingUrl: '#',
+    source: 'Trade-a-Plane',
+    isExternal: false,
+    dataAiHint: generateDataAiHint('Piper', 'Cherokee PA-28'),
+  },
+  {
+    id: '3',
+    brand: 'Cirrus',
+    model: 'SR22',
+    type: 'Single Engine Piston',
+    price: 450000,
+    location: 'Duluth, MN',
+    description: 'High-performance aircraft with CAPS parachute system. Glass cockpit.',
+    imageUrl: 'https://placehold.co/600x400.png',
+    listingUrl: '#',
+    source: 'Controller',
+    isExternal: false,
+    dataAiHint: generateDataAiHint('Cirrus', 'SR22'),
+  },
+  {
+    id: '4',
+    brand: "Van's Aircraft",
+    model: 'RV-7',
+    type: 'Experimental/Kit',
+    price: 120000,
+    location: 'Aurora, OR (Online)',
+    description: 'Beautifully built RV-7 with modern avionics. Fast and fun!',
+    imageUrl: 'https://placehold.co/600x400.png',
+    listingUrl: 'https://www.facebook.com/marketplace', // Example, actual URL would be specific
+    source: 'Facebook Marketplace',
+    isExternal: true,
+    dataAiHint: generateDataAiHint("Van's Aircraft", 'RV-7'),
+  },
+  {
+    id: '5',
+    brand: 'Kitfox',
+    model: 'Series 7',
+    type: 'Bush Plane',
+    price: 75000,
+    location: 'Homedale, ID (Local Pickup)',
+    description: 'STOL capable Kitfox, ready for backcountry adventures.',
+    imageUrl: 'https://placehold.co/600x400.png',
+    listingUrl: 'https://craigslist.org', // Example
+    source: 'Craigslist',
+    isExternal: true,
+    dataAiHint: generateDataAiHint('Kitfox', 'Series 7'),
+  },
+   {
+    id: '6',
+    brand: 'Beechcraft',
+    model: 'Bonanza G36',
+    type: 'Single Engine Piston',
+    price: 650000,
+    location: 'Dallas, TX',
+    description: 'Luxury six-seater with G1000 avionics. Fast and comfortable.',
+    imageUrl: 'https://placehold.co/600x400.png',
+    listingUrl: '#',
+    source: 'Controller',
+    isExternal: false,
+    dataAiHint: generateDataAiHint('Beechcraft', 'Bonanza G36'),
+  },
+  {
+    id: '7',
+    brand: 'Diamond',
+    model: 'DA40 NG',
+    type: 'Single Engine Piston',
+    price: 380000,
+    location: 'London, ON, Canada',
+    description: 'Modern composite aircraft with efficient diesel engine.',
+    imageUrl: 'https://placehold.co/600x400.png',
+    listingUrl: '#',
+    source: 'Trade-a-Plane',
+    isExternal: false,
+    dataAiHint: generateDataAiHint('Diamond', 'DA40 NG'),
+  },
+];
+
+export const USER_ID_DEMO = "user123"; // For AI preference learning demo
