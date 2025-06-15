@@ -1,5 +1,5 @@
 import type {NextConfig} from 'next';
-import path from 'path';
+import path from 'path'; // Ensure path module is imported
 
 const nextConfig: NextConfig = {
   /* config options here */
