@@ -3,8 +3,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
-// import { FilterPanel } from '../components/FilterPanel.tsx'; // Temporarily removed for testing
-import { Footer } from '../components/Footer'; // Testing Footer import
+// import { Footer } from '@/components/Footer'; // Original alias import
+import { Footer } from './src/components/Footer.tsx'; // Corrected relative import for Footer
+// import { FilterPanel } from '../components/FilterPanel.tsx'; // Original failing import, now commented
 import { ListingsGrid } from '@/components/ListingsGrid';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { NoResults } from '@/components/NoResults';
@@ -95,7 +96,7 @@ export default function HomePage() {
               isSearching={isLoading}
             /> 
             */}
-            <div>FilterPanel is commented out for testing. Footer component should appear below.</div>
+            <div>FilterPanel is commented out for testing.</div>
           </div>
           <div className="lg:col-span-8 xl:col-span-9">
             {isLoading ? (
@@ -110,7 +111,7 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-      <Footer /> {/* Using the imported Footer component */}
+      <Footer /> {/* This should work if the import works */}
     </div>
   );
 }
