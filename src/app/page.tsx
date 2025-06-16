@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { FilterPanel } from '../components/FilterPanel'; // Changed to relative path
+import { FilterPanel } from '../components/FilterPanel.tsx'; // Changed to relative path with extension
 import { ListingsGrid } from '@/components/ListingsGrid';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { NoResults } from '@/components/NoResults';
@@ -111,3 +111,4 @@ export default function HomePage() {
     </div>
   );
 }
+
