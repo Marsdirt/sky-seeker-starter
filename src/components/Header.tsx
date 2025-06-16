@@ -8,7 +8,7 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2 group">
           <Plane className="h-10 w-10 text-primary group-hover:animate-pulse" />
           <h1 className="text-3xl font-headline font-bold text-primary">
-            Sky-Seeker
+            Sky-Seeker v2
           </h1>
         </Link>
         {/* Navigation items can be added here if needed */}
