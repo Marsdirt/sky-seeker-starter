@@ -4,11 +4,12 @@
 // or the main page at src/app/page.tsx failed to render.
 export default function RootFallbackPage() {
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', textAlign: 'center' }}>
-      <h1>Fallback Page</h1>
-      <p>If you are seeing this, the Next.js app is incorrectly using the root app directory instead of src/app, or your main page in src/app/page.tsx has an error.</p>
-      <p>Please ensure your Next.js configuration (next.config.js) and project structure correctly prioritize src/app.</p>
-      <p>The intended page should be rendered from src/app/page.tsx.</p>
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', textAlign: 'center', backgroundColor: '#f0f8ff' }}>
+      <h1>ROOT FALLBACK PAGE</h1>
+      <p>This page is from /opt/render/project/src/app/page.tsx (the project root's app/page.tsx).</p>
+      <p>You should NOT be seeing this if the app is configured correctly to use the 'src' directory.</p>
+      <p>The main application page should be rendered from 'src/app/page.tsx'.</p>
+      <p>Commit: Diagnostic Test 1</p>
     </div>
   );
 }
