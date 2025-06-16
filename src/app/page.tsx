@@ -41,6 +41,7 @@ export default function HomePage() {
   useEffect(() => {
     // Initial load of all placeholder listings
     handleSearch(INITIAL_FILTERS, false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
