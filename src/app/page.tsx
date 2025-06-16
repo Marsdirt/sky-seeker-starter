@@ -3,8 +3,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
-// import { FilterPanel } from '../components/FilterPanel.tsx'; // Temporarily removed for testing
-import { Footer } from '../components/Footer.tsx'; // Corrected relative import for Footer test
+import { Footer } from '../components/Footer.tsx'; // Corrected relative import for Footer
+import { FilterPanel } from '../components/FilterPanel.tsx'; // Corrected relative import for FilterPanel
 import { ListingsGrid } from '@/components/ListingsGrid';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { NoResults } from '@/components/NoResults';
@@ -87,15 +87,12 @@ export default function HomePage() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-4 xl:col-span-3">
-            {/*
             <FilterPanel
               filters={filters}
               onFilterChange={handleFilterChange}
               onSearch={() => handleSearch()}
               isSearching={isLoading}
             />
-            */}
-            <div>FilterPanel is commented out for testing. Footer component should appear below.</div>
           </div>
           <div className="lg:col-span-8 xl:col-span-9">
             {isLoading ? (
@@ -110,7 +107,7 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-      <Footer /> {/* Using the imported Footer component */}
+      <Footer />
     </div>
   );
 }
