@@ -1,3 +1,4 @@
+
 export interface AircraftListing {
   id: string;
   brand: string;
@@ -25,3 +26,5 @@ export interface SearchFilters {
 
 export interface UserInteraction {
   listingId: string;
+  interactionType: 'liked' | 'disliked'; // Ensure this line is correct
+}
