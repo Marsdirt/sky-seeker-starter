@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // Add path aliases
     config.resolve.alias = {
-      ...(config.resolve.alias || {}), // Ensure alias object exists
+      ...(config.resolve.alias || {}), // Ensure alias object exists and spread existing aliases
       '@': path.resolve(__dirname, './src'),
       '@/components': path.resolve(__dirname, './src/components'),
       '@/lib': path.resolve(__dirname, './src/lib'),
@@ -27,4 +27,6 @@ const nextConfig: NextConfig = {
     return config;
   },
 };
+
+export default nextConfig;
 
