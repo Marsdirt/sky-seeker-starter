@@ -3,8 +3,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
-import { Footer } from '../components/Footer.tsx'; // Corrected relative import for Footer
-import { FilterPanel } from '../components/FilterPanel.tsx'; // Corrected relative import for FilterPanel
+// import { FilterPanel } from '../components/FilterPanel.tsx'; // Commented out for testing
+import { Footer } from '../components/Footer.tsx'; // Testing relative import for Footer
 import { ListingsGrid } from '@/components/ListingsGrid';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { NoResults } from '@/components/NoResults';
@@ -87,12 +87,13 @@ export default function HomePage() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-4 xl:col-span-3">
-            <FilterPanel
+            {/* <FilterPanel
               filters={filters}
               onFilterChange={handleFilterChange}
               onSearch={() => handleSearch()}
               isSearching={isLoading}
-            />
+            /> */}
+            <p>Filter Panel Placeholder</p> {/* Placeholder for FilterPanel */}
           </div>
           <div className="lg:col-span-8 xl:col-span-9">
             {isLoading ? (
@@ -111,4 +112,3 @@ export default function HomePage() {
     </div>
   );
 }
-
