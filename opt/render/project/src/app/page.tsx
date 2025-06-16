@@ -3,8 +3,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { FilterPanel } from '../components/FilterPanel'; // Changed to relative path
+// import { Footer } from '@/components/Footer'; // Original alias import
+import { Footer } from '../components/Footer'; // Testing relative import for Footer
+// import { FilterPanel } from '../components/FilterPanel.tsx'; // Original failing import, now commented
 import { ListingsGrid } from '@/components/ListingsGrid';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { NoResults } from '@/components/NoResults';
@@ -87,12 +88,15 @@ export default function HomePage() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-4 xl:col-span-3">
+            {/* 
             <FilterPanel
               filters={filters}
               onFilterChange={handleFilterChange}
               onSearch={() => handleSearch()}
               isSearching={isLoading}
-            />
+            /> 
+            */}
+            <div>FilterPanel is commented out for testing.</div>
           </div>
           <div className="lg:col-span-8 xl:col-span-9">
             {isLoading ? (
@@ -107,7 +111,7 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer /> {/* This should work if the import works */}
     </div>
   );
 }
