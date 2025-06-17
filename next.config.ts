@@ -1,9 +1,9 @@
 
 import type {NextConfig} from 'next';
-import path from 'path'; // Ensure path module is imported
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'standalone', // Recommended for Docker/serverless environments
+  srcDir: 'src', // Explicitly set the source directory
   images: {
     remotePatterns: [
       {
@@ -14,18 +14,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Add path aliases
-    config.resolve.alias = {
-      ...(config.resolve.alias || {}), // Ensure alias object exists and spread existing aliases
-      '@': path.resolve(__dirname, './src'),
-      '@/components': path.resolve(__dirname, './src/components'),
-      '@/lib': path.resolve(__dirname, './src/lib'),
-      '@/hooks': path.resolve(__dirname, './src/hooks'),
-      '@/types': path.resolve(__dirname, './src/types'),
-    };
-    return config;
-  },
+  // Webpack alias for path resolution is removed for simplification,
+  // as srcDir and Next.js's default handling should cover '@/' paths.
 };
 
 export default nextConfig;
