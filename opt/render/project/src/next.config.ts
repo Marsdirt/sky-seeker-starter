@@ -3,6 +3,7 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   output: 'standalone', // Recommended for Docker/serverless environments
+  srcDir: 'src', // Explicitly set the source directory
   images: {
     remotePatterns: [
       {
@@ -13,7 +14,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Webpack alias configuration removed for simplicity during troubleshooting
 };
 
 export default nextConfig;
