@@ -5,6 +5,7 @@ import type { AircraftListing, UserInteraction } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink, MapPin, Tag, ThumbsDown, ThumbsUp, Info } from 'lucide-react';
+import Image from 'next/image';
 
 interface ListingCardProps {
   listing: AircraftListing;
@@ -27,9 +28,15 @@ export function ListingCard({ listing, onInteraction }: ListingCardProps) {
 
   return (
     <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
-      {/* Diagnostic Placeholder for Image Area */}
-      <div className="w-full aspect-[3/2] bg-muted flex items-center justify-center">
-        <span className="text-muted-foreground text-sm">Image Area (600x400)</span>
+      <div className="relative w-full aspect-[3/2] overflow-hidden bg-muted">
+        <Image
+          src={listing.imageUrl || "https://placehold.co/600x400.png"}
+          alt={`Image of ${listing.brand} ${listing.model}`}
+          fill={true}
+          style={{ objectFit: 'cover' }}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          data-ai-hint={listing.dataAiHint || 'aircraft plane'}
+        />
       </div>
       
       <CardHeader className="pb-2">
