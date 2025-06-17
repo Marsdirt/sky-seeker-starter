@@ -87,7 +87,7 @@ export default function HomePage() {
       <Header />
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-4 xl:col-span-3">
+          <div className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 self-start">
             <FilterPanel
               filters={filters}
               onFilterChange={handleFilterChange}
