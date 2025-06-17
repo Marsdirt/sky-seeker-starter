@@ -59,7 +59,7 @@ export default function HomePage() {
         };
       });
       setListings(updatedListings);
-    } catch (error) {
+    } catch (error)
       console.error('Failed to fetch listings:', error);
       toast({ title: 'Error', description: 'Could not fetch listings.', variant: 'destructive' });
       setListings([]);
@@ -69,6 +69,11 @@ export default function HomePage() {
 
   const handleFilterChange = (newFilters: SearchFilters) => {
     setFilters(newFilters);
+  };
+
+  const handleResetFilters = () => {
+    setFilters(INITIAL_FILTERS);
+    handleSearch(INITIAL_FILTERS, false); // Re-search with initial filters, don't mark as "user initiated search"
   };
 
   const handleListingInteraction = (interaction: UserInteraction) => {
@@ -92,6 +97,7 @@ export default function HomePage() {
               filters={filters}
               onFilterChange={handleFilterChange}
               onSearch={() => handleSearch()}
+              onResetFilters={handleResetFilters}
               isSearching={isLoading}
             />
           </div>
@@ -113,3 +119,4 @@ export default function HomePage() {
     </div>
   );
 }
+
