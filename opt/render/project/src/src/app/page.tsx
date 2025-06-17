@@ -71,6 +71,11 @@ export default function HomePage() {
     setFilters(newFilters);
   };
 
+  const handleResetFilters = () => {
+    setFilters(INITIAL_FILTERS);
+    handleSearch(INITIAL_FILTERS, false); // Re-search with initial filters, don't mark as "user initiated search"
+  };
+
   const handleListingInteraction = (interaction: UserInteraction) => {
     // Update listing UI immediately for like/dislike visual feedback
     setListings(prevListings =>
@@ -87,11 +92,12 @@ export default function HomePage() {
       <Header />
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-4 xl:col-span-3">
+          <div className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 self-start">
             <FilterPanel
               filters={filters}
               onFilterChange={handleFilterChange}
               onSearch={() => handleSearch()}
+              onResetFilters={handleResetFilters}
               isSearching={isLoading}
             />
           </div>
@@ -103,6 +109,7 @@ export default function HomePage() {
             ) : hasSearched ? (
               <NoResults />
             ) : (
+               // Initial state before any search, show all placeholders or a welcome message
                <NoResults message="Welcome to Sky-Seeker! Adjust filters and click search to find aircraft." />
             )}
           </div>
