@@ -13,19 +13,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Removing custom webpack for now to simplify
-  // webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-  //   // Add path aliases
-  //   config.resolve.alias = {
-  //     ...(config.resolve.alias || {}),
-  //     '@': path.resolve(__dirname, './src'),
-  //     '@/components': path.resolve(__dirname, './src/components'),
-  //     '@/lib': path.resolve(__dirname, './src/lib'),
-  //     '@/hooks': path.resolve(__dirname, './src/hooks'),
-  //     '@/types': path.resolve(__dirname, './src/types'),
-  //   };
-  //   return config;
-  // },
+  // Webpack alias configuration removed for simplicity during troubleshooting
 };
 
 export default nextConfig;
