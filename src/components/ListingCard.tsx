@@ -28,12 +28,13 @@ export function ListingCard({ listing, onInteraction }: ListingCardProps) {
 
   return (
     <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
-      <div className="relative w-full aspect-[3/2] overflow-hidden bg-muted">
+      <div className="w-full overflow-hidden bg-muted">
         <Image
           src={listing.imageUrl || "https://placehold.co/600x400.png"}
           alt={`Image of ${listing.brand} ${listing.model}`}
-          fill={true}
-          style={{ objectFit: 'cover' }}
+          width={600}
+          height={400}
+          className="w-full h-auto object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           data-ai-hint={listing.dataAiHint || 'aircraft plane'}
         />
