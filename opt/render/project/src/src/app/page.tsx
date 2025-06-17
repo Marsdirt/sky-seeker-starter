@@ -85,6 +85,8 @@ export default function HomePage() {
         : l
       )
     );
+    // Here you could also send this interaction to a backend or AI service
+    // For now, it's just a local state update
   };
 
   return (
