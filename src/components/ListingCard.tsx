@@ -1,10 +1,10 @@
+
 'use client';
 
 import Image from 'next/image';
 import type { AircraftListing, UserInteraction } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { ExternalLink, MapPin, Tag, ThumbsDown, ThumbsUp, Info } from 'lucide-react';
 
 interface ListingCardProps {
@@ -27,14 +27,16 @@ export function ListingCard({ listing, onInteraction }: ListingCardProps) {
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out h-full">
+    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
       <div className="relative w-full h-48 sm:h-56">
         <Image
           src={listing.imageUrl}
           alt={`${listing.brand} ${listing.model}`}
-          layout="fill"
-          objectFit="cover"
+          fill={true}
+          style={{ objectFit: 'cover' }}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           data-ai-hint={listing.dataAiHint || `${listing.brand.toLowerCase()} ${listing.model.toLowerCase().split(' ')[0]}` || 'aircraft plane'}
+          priority={listing.id === '1' || listing.id === '2' || listing.id === '3'} // Prioritize loading for the first few images
         />
       </div>
       <CardHeader className="pb-2">
