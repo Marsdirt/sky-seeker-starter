@@ -1,15 +1,10 @@
 
-
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css'; // Ensure this import is present and correct
-import { Toaster } from '@/components/ui/toaster';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+import './globals.css'; // Keep this for basic styling if globals.css is present
 
 export const metadata: Metadata = {
-  title: 'Sky-Seeker',
-  description: 'Find your next aircraft with Sky-Seeker',
+  title: 'Sky-Seeker Diagnostic',
+  description: 'Testing srcDir configuration',
 };
 
 export default function RootLayout({
@@ -18,12 +13,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable}`}>
-      <head>
-      </head>
-      <body className="font-body antialiased">
+    <html lang="en">
+      <body>
         {children}
-        <Toaster />
       </body>
     </html>
   );
