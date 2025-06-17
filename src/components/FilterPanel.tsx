@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { SearchFilters } from '@/types';
@@ -13,12 +14,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, Filter, Search } from 'lucide-react';
+import { DollarSign, Filter, Search, RotateCcw } from 'lucide-react';
 
 interface FilterPanelProps {
   filters: SearchFilters;
   onFilterChange: (newFilters: SearchFilters) => void;
   onSearch: () => void;
+  onResetFilters: () => void;
   isSearching: boolean;
 }
 
@@ -26,6 +28,7 @@ export function FilterPanel({
   filters,
   onFilterChange,
   onSearch,
+  onResetFilters,
   isSearching,
 }: FilterPanelProps) {
   const handleChange = (field: keyof SearchFilters, value: string) => {
@@ -138,9 +141,19 @@ export function FilterPanel({
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Button type="submit" className="w-full flex-grow bg-primary hover:bg-primary/90" disabled={isSearching}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onResetFilters} 
+              className="w-full sm:w-auto" 
+              disabled={isSearching}
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Reset
+            </Button>
+            <Button type="submit" className="w-full flex-grow bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isSearching}>
               <Search className="mr-2 h-4 w-4" />
-              {isSearching ? 'Searching...' : 'Search Every Hangar'}
+              {isSearching ? 'Searching...' : 'Search Aircraft'}
             </Button>
           </div>
         </form>
