@@ -1,7 +1,6 @@
 
 'use client';
 
-import Image from 'next/image';
 import type { AircraftListing, UserInteraction } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,16 +27,11 @@ export function ListingCard({ listing, onInteraction }: ListingCardProps) {
 
   return (
     <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
-      <div className="relative w-full aspect-[3/2] overflow-hidden">
-        <Image
-          src={listing.imageUrl}
-          alt={`${listing.brand} ${listing.model}`}
-          fill={true}
-          style={{ objectFit: 'cover' }}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          data-ai-hint={listing.dataAiHint || `${listing.brand.toLowerCase()} ${listing.model.toLowerCase().split(' ')[0]}` || 'aircraft plane'}
-        />
+      {/* Diagnostic Placeholder for Image Area */}
+      <div className="w-full aspect-[3/2] bg-muted flex items-center justify-center">
+        <span className="text-muted-foreground text-sm">Image Area (600x400)</span>
       </div>
+      
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-headline leading-tight">
           {listing.brand} {listing.model}
@@ -90,4 +84,3 @@ export function ListingCard({ listing, onInteraction }: ListingCardProps) {
     </Card>
   );
 }
-
