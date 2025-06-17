@@ -103,6 +103,7 @@ export default function HomePage() {
             ) : hasSearched ? (
               <NoResults />
             ) : (
+               // Initial state before any search, show all placeholders or a welcome message
                <NoResults message="Welcome to Sky-Seeker! Adjust filters and click search to find aircraft." />
             )}
           </div>
