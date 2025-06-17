@@ -1,6 +1,7 @@
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
+import './globals.css'; // Ensure this is correctly importing from src/app/globals.css
 import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -18,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`}>
       <head>
-        {/* Google Font links for Inter are removed as next/font/google handles it. */}
+        {/* Google Font links are handled by next/font/google */}
       </head>
       <body className="font-body antialiased">
         {children}
