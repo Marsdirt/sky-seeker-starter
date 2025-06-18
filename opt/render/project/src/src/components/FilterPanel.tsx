@@ -20,7 +20,7 @@ import { DollarSign, Filter, Search } from 'lucide-react';
 interface FilterPanelProps {
   filters: SearchFilters;
   onFilterChange: (newFilters: SearchFilters) => void;
-  onSearch: () => Promise<void>; 
+  onSearch: () => Promise<void>;
   isSearching: boolean;
 }
 
