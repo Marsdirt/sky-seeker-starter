@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -71,6 +70,11 @@ export default function HomePage() {
     setFilters(newFilters);
   };
 
+  const handleResetFilters = () => {
+    setFilters(INITIAL_FILTERS);
+    handleSearch(INITIAL_FILTERS, false); // Re-search with initial filters, don't mark as "user initiated search"
+  };
+
   const handleListingInteraction = (interaction: UserInteraction) => {
     // Update listing UI immediately for like/dislike visual feedback
     setListings(prevListings =>
@@ -94,6 +98,7 @@ export default function HomePage() {
               filters={filters}
               onFilterChange={handleFilterChange}
               onSearch={() => handleSearch()}
+              onResetFilters={handleResetFilters}
               isSearching={isLoading}
             />
           </div>
