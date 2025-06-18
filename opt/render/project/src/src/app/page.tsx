@@ -58,12 +58,12 @@ export default function HomePage() {
           userInteraction: existingListing ? existingListing.userInteraction : null,
         };
       });
-      setListings(updatedListings);
-    } catch (error) {
-      console.error('Failed to fetch listings:', error);
-      toast({ title: 'Error', description: 'Could not fetch listings.', variant: 'destructive' });
-      setListings([]);
-    }
+    61 |       setListings(updatedListings);
+62 |     } catch (error) {
+63 |       console.error('Failed to fetch listings:', error);
+64 |       toast({ title: 'Error', description: 'Could not fetch listings.', variant: 'destructive' });
+65 |       setListings([]);
+66 |     }
     setIsLoading(false);
   };
 
