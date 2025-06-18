@@ -19,7 +19,7 @@ import { DollarSign, Filter, Search } from 'lucide-react';
 interface FilterPanelProps {
   filters: SearchFilters;
   onFilterChange: (newFilters: SearchFilters) => void;
-  onSearch: () => Promise<void>; // Adjusted to match what page.tsx provides
+  onSearch: () => Promise<void>; 
   isSearching: boolean;
 }
 
@@ -149,4 +149,3 @@ export function FilterPanel({
     </Card>
   );
 }
-
