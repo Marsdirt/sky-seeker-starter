@@ -43,26 +43,26 @@ export default function HomePage() {
   }, []);
 
   const handleSearch = async (currentFilters: SearchFilters = filters, markSearched: boolean = true) => {
-    setIsLoading(true);
-    if (markSearched) setHasSearched(true);
-    try {
-      const fetchedListings = await fetchListings(currentFilters);
-      // Preserve user interactions on existing listings if any were stored locally
-      const updatedListings = fetchedListings.map(fl => {
-        const existingListing = listings.find(l => l.id === fl.id);
-        return {
-          ...fl,
-          userInteraction: existingListing ? existingListing.userInteraction : null,
-        };
-      });
-      setListings(updatedListings);
-    } catch (error) {
-      console.error('Failed to fetch listings:', error);
-      toast({ title: 'Error', description: 'Could not fetch listings.', variant: 'destructive' });
-      setListings([]);
-    }
-    setIsLoading(false);
-  };
+  setIsLoading(true);
+  if (markSearched) setHasSearched(true);
+  try {
+    const fetchedListings = await fetchListings(currentFilters);
+    // Preserve user interactions on existing listings if any were stored locally
+    const updatedListings = fetchedListings.map(fl => {
+      const existingListing = listings.find(l => l.id === fl.id);
+      return {
+        ...fl,
+        userInteraction: existingListing ? existingListing.userInteraction : null,
+      };
+    });
+    setListings(updatedListings);
+  } catch (error) {
+    console.error('Failed to fetch listings:', error);
+    toast({ title: 'Error', description: 'Could not fetch listings.', variant: 'destructive' });
+    setListings([]);
+  }
+  setIsLoading(false);
+};
 
   const handleFilterChange = (newFilters: SearchFilters) => {
     setFilters(newFilters);
