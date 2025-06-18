@@ -55,7 +55,7 @@ export default function HomePage() {
         userInteraction: existingListing ? existingListing.userInteraction : null,
       };
     });
-    setListings(updatedListings);
+      setListings(updatedListings);
   } catch (error) {
     console.error('Failed to fetch listings:', error);
     toast({ title: 'Error', description: 'Could not fetch listings.', variant: 'destructive' });
