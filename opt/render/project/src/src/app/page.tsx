@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -30,7 +29,6 @@ const fetchListings = async (filters: SearchFilters): Promise<AircraftListing[]>
   });
 };
 
-
 export default function HomePage() {
   const [filters, setFilters] = useState<SearchFilters>(INITIAL_FILTERS);
   const [listings, setListings] = useState<AircraftListing[]>([]);
@@ -41,13 +39,12 @@ export default function HomePage() {
   useEffect(() => {
     // Initial load of all placeholder listings
     handleSearch(INITIAL_FILTERS, false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   const handleSearch = async (currentFilters: SearchFilters = filters, markSearched: boolean = true) => {
     setIsLoading(true);
-    if(markSearched) setHasSearched(true);
+    if (markSearched) setHasSearched(true);
     try {
       const fetchedListings = await fetchListings(currentFilters);
       // Preserve user interactions on existing listings if any were stored locally
@@ -58,12 +55,12 @@ export default function HomePage() {
           userInteraction: existingListing ? existingListing.userInteraction : null,
         };
       });
-    61 |       setListings(updatedListings);
-62 |     } catch (error) {
-63 |       console.error('Failed to fetch listings:', error);
-64 |       toast({ title: 'Error', description: 'Could not fetch listings.', variant: 'destructive' });
-65 |       setListings([]);
-66 |     }
+      setListings(updatedListings);
+    } catch (error) {
+      console.error('Failed to fetch listings:', error);
+      toast({ title: 'Error', description: 'Could not fetch listings.', variant: 'destructive' });
+      setListings([]);
+    }
     setIsLoading(false);
   };
 
@@ -81,8 +78,8 @@ export default function HomePage() {
     setListings(prevListings =>
       prevListings.map(l =>
         l.id === interaction.listingId
-        ? { ...l, userInteraction: l.userInteraction === interaction.interactionType ? null : interaction.interactionType }
-        : l
+          ? { ...l, userInteraction: l.userInteraction === interaction.interactionType ? null : interaction.interactionType }
+          : l
       )
     );
     // Here you could also send this interaction to a backend or AI service
@@ -111,8 +108,8 @@ export default function HomePage() {
             ) : hasSearched ? (
               <NoResults />
             ) : (
-               // Initial state before any search, show all placeholders or a welcome message
-               <NoResults message="Welcome to Sky-Seeker! Adjust filters and click search to find aircraft." />
+              // Initial state before any search, show all placeholders or a welcome message
+              <NoResults message="Welcome to Sky-Seeker! Adjust filters and click search to find aircraft." />
             )}
           </div>
         </div>
@@ -121,4 +118,3 @@ export default function HomePage() {
     </div>
   );
 }
-
