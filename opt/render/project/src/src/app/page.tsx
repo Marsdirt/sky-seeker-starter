@@ -59,7 +59,7 @@ export default function HomePage() {
         };
       });
       setListings(updatedListings);
-    } catch (error) {
+    } catch (error) { // Corrected line: added {
       console.error('Failed to fetch listings:', error);
       toast({ title: 'Error', description: 'Could not fetch listings.', variant: 'destructive' });
       setListings([]);
@@ -121,3 +121,4 @@ export default function HomePage() {
     </div>
   );
 }
+
