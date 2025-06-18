@@ -84,8 +84,11 @@ export default function HomePage() {
     );
     // Here you could also send this interaction to a backend or AI service
     // For now, it's just a local state update
-  };
+  }; // <<-- This must be here!
 
+  // --------------------------
+  // Now the main return block:
+  // --------------------------
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
@@ -108,5 +111,13 @@ export default function HomePage() {
             ) : hasSearched ? (
               <NoResults />
             ) : (
-              // Initial state before any search,
-
+              // Initial state before any search, show all placeholders or a welcome message
+              <NoResults message="Welcome to Sky-Seeker! Adjust filters and click search to find aircraft." />
+            )}
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
