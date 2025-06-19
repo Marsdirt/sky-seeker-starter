@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -30,7 +29,6 @@ const fetchListings = async (filters: SearchFilters): Promise<AircraftListing[]>
   });
 };
 
-
 export default function HomePage() {
   const [filters, setFilters] = useState<SearchFilters>(INITIAL_FILTERS);
   const [listings, setListings] = useState<AircraftListing[]>([]);
@@ -41,13 +39,12 @@ export default function HomePage() {
   useEffect(() => {
     // Initial load of all placeholder listings
     handleSearch(INITIAL_FILTERS, false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   const handleSearch = async (currentFilters: SearchFilters = filters, markSearched: boolean = true) => {
     setIsLoading(true);
-    if(markSearched) setHasSearched(true);
+    if (markSearched) setHasSearched(true);
     try {
       const fetchedListings = await fetchListings(currentFilters);
       // Preserve user interactions on existing listings if any were stored locally
@@ -59,7 +56,7 @@ export default function HomePage() {
         };
       });
       setListings(updatedListings);
-    } catch (error)
+    } catch (error) {
       console.error('Failed to fetch listings:', error);
       toast({ title: 'Error', description: 'Could not fetch listings.', variant: 'destructive' });
       setListings([]);
@@ -73,18 +70,19 @@ export default function HomePage() {
 
   const handleResetFilters = () => {
     setFilters(INITIAL_FILTERS);
-    handleSearch(INITIAL_FILTERS, false); // Re-search with initial filters, don't mark as "user initiated search"
+    handleSearch(INITIAL_FILTERS, false);
   };
 
   const handleListingInteraction = (interaction: UserInteraction) => {
-    // Update listing UI immediately for like/dislike visual feedback
     setListings(prevListings =>
       prevListings.map(l =>
         l.id === interaction.listingId
-        ? { ...l, userInteraction: l.userInteraction === interaction.interactionType ? null : interaction.interactionType }
-        : l
+          ? { ...l, userInteraction: l.userInteraction === interaction.interactionType ? null : interaction.interactionType }
+          : l
       )
     );
+    // Here you could also send this interaction to a backend or AI service
+    // For now, it's just a local state update
   };
 
   return (
@@ -96,7 +94,7 @@ export default function HomePage() {
             <FilterPanel
               filters={filters}
               onFilterChange={handleFilterChange}
-              onSearch={() => handleSearch()}
+              onSearch={handleSearch}
               onResetFilters={handleResetFilters}
               isSearching={isLoading}
             />
@@ -109,8 +107,7 @@ export default function HomePage() {
             ) : hasSearched ? (
               <NoResults />
             ) : (
-               // Initial state before any search, show all placeholders or a welcome message
-               <NoResults message="Welcome to Sky-Seeker! Adjust filters and click search to find aircraft." />
+              <NoResults message="Welcome to Sky-Seeker! Adjust filters and click search to find aircraft." />
             )}
           </div>
         </div>
@@ -119,4 +116,3 @@ export default function HomePage() {
     </div>
   );
 }
-
