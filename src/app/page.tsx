@@ -4,6 +4,42 @@ import React, { useState } from "react";
 import AircraftFilter from "../components/AircraftFilter";
 import { REGIONS } from "../data/regions";
 
+// Helper to build Barnstormers advanced search URL (auto search results)
+function makeBarnstormersUrl({
+  brand,
+  model,
+  minPrice,
+  maxPrice,
+}: {
+  brand: string;
+  model: string;
+  minPrice: string;
+  maxPrice: string;
+}) {
+  const params = [
+    `headline=`,
+    `body=`,
+    `part_num=`,
+    `mfg=${encodeURIComponent(brand || "")}`,
+    `model=${encodeURIComponent(model || "")}`,
+    `user__profile__company=`,
+    `user__last_name=`,
+    `user__first_name=`,
+    `user__profile__country=`,
+    `specialcase__state=`,
+    `user__profile__city=`,
+    `user__profile__uzip=`,
+    `specialcase__phone=`,
+    `user__email=`,
+    `my_cats__name=`,
+    `price__gte=${encodeURIComponent(minPrice || "")}`,
+    `price__lte=${encodeURIComponent(maxPrice || "")}`,
+    `search_type=advanced`,
+    `keyword=`,
+  ];
+  return "https://www.barnstormers.com/cat_search.php?" + params.join("&");
+}
+
 // Helper to build search URLs for various marketplaces
 function buildSearchLinks({
   brand,
@@ -61,16 +97,13 @@ function buildSearchLinks({
       })
     );
 
-  // Barnstormers: Use /cat_search.php with mfg, model, price__gte, price__lte
-  const barnstormersParams: string[] = [];
-  if (brand) barnstormersParams.push(`mfg=${encodeURIComponent(brand)}`);
-  if (model) barnstormersParams.push(`model=${encodeURIComponent(model)}`);
-  if (minPrice) barnstormersParams.push(`price__gte=${encodeURIComponent(minPrice)}`);
-  if (maxPrice) barnstormersParams.push(`price__lte=${encodeURIComponent(maxPrice)}`);
-  let barnstormersUrl = "https://www.barnstormers.com/cat_search.php";
-  if (barnstormersParams.length) {
-    barnstormersUrl += "?" + barnstormersParams.join("&");
-  }
+  // Barnstormers: Use advanced search URL with all params for direct results
+  const barnstormersUrl = makeBarnstormersUrl({
+    brand,
+    model,
+    minPrice,
+    maxPrice,
+  });
 
   // Trade-A-Plane: improved URL supporting price, keyword, and s-type
   const keyword = [brand, model, type].filter(Boolean).join(" ").trim();
