@@ -75,38 +75,37 @@ export default function HomePage() {
     <div className="min-h-screen bg-white p-4">
       {/* Header */}
       <header className="flex items-center mb-6">
-        <span className="text-blue-500 text-2xl mr-2">✈️</span>
-        <span className="text-blue-600 text-2xl font-bold">Sky-Seeker</span>
+        <span className="text-blue-500 text-3xl mr-2">✈️</span>
+        <span className="text-blue-600 text-4xl font-extrabold">Sky-Seeker</span>
       </header>
 
       {/* Filter/Search Section */}
       <section className="max-w-xl mx-auto mb-8 bg-white rounded-xl shadow p-6">
-        <h2 className="text-xl font-bold mb-6 flex items-center">
-          {/* No airplane icon here */}
+        <h2 className="text-xl font-bold mb-8">
           Search Every Hangar
         </h2>
-        <div className="mb-4">
-          <label className="block font-medium">Brand</label>
+        <div className="mb-6">
+          <label className="block font-medium mb-2">Brand</label>
           <input
-            className="w-full border rounded px-3 py-2 mt-1"
+            className="w-full border rounded px-3 py-2"
             placeholder="e.g., Cessna"
             value={brand}
             onChange={e => setBrand(e.target.value)}
           />
         </div>
-        <div className="mb-4">
-          <label className="block font-medium">Model</label>
+        <div className="mb-6">
+          <label className="block font-medium mb-2">Model</label>
           <input
-            className="w-full border rounded px-3 py-2 mt-1"
+            className="w-full border rounded px-3 py-2"
             placeholder="e.g., 172, SR22"
             value={model}
             onChange={e => setModel(e.target.value)}
           />
         </div>
-        <div className="mb-4">
-          <label className="block font-medium">Aircraft Type</label>
+        <div className="mb-6">
+          <label className="block font-medium mb-2">Aircraft Type</label>
           <select
-            className="w-full border rounded px-3 py-2 mt-1"
+            className="w-full border rounded px-3 py-2"
             value={type}
             onChange={e => setType(e.target.value)}
           >
@@ -115,11 +114,11 @@ export default function HomePage() {
             ))}
           </select>
         </div>
-        <div className="mb-4 flex gap-2">
+        <div className="mb-6 flex gap-2">
           <div className="flex-1">
-            <label className="block font-medium">Min Price</label>
+            <label className="block font-medium mb-2">Min Price</label>
             <input
-              className="w-full border rounded px-3 py-2 mt-1"
+              className="w-full border rounded px-3 py-2"
               placeholder="$ e.g., 50,000"
               value={minPrice}
               onChange={e => setMinPrice(e.target.value)}
@@ -127,9 +126,9 @@ export default function HomePage() {
             />
           </div>
           <div className="flex-1">
-            <label className="block font-medium">Max Price</label>
+            <label className="block font-medium mb-2">Max Price</label>
             <input
-              className="w-full border rounded px-3 py-2 mt-1"
+              className="w-full border rounded px-3 py-2"
               placeholder="$ e.g., 200,000"
               value={maxPrice}
               onChange={e => setMaxPrice(e.target.value)}
@@ -137,10 +136,10 @@ export default function HomePage() {
             />
           </div>
         </div>
-        <div className="mb-6">
-          <label className="block font-medium">Regional Location</label>
+        <div className="mb-8">
+          <label className="block font-medium mb-2">Regional Location</label>
           <input
-            className="w-full border rounded px-3 py-2 mt-1"
+            className="w-full border rounded px-3 py-2"
             placeholder="e.g., California, Midwest"
             value={region}
             onChange={e => setRegion(e.target.value)}
