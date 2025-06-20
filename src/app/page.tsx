@@ -217,7 +217,8 @@ export default function HomePage() {
               Array.from(e.target.selectedOptions, option => option.value)
             )
           }
-          className="border rounded px-2 py-1 w-64 h-32"
+          className="border rounded px-2 py-1 w-64 h-64" // Taller dropdown
+          size={12} // Show more options at once
         >
           {STATES.map((state) => (
             <option key={state.abbr} value={state.abbr}>
@@ -253,6 +254,7 @@ export default function HomePage() {
 
       {/* Filter/Search Section */}
       <div className="flex flex-col items-center">
+        {/* Remove region boxes by not passing them */}
         <AircraftFilter
           brand={brand}
           setBrand={setBrand}
@@ -264,7 +266,6 @@ export default function HomePage() {
           setMinPrice={setMinPrice}
           maxPrice={maxPrice}
           setMaxPrice={setMaxPrice}
-          // Remove regions and use states
           regions={[]} // legacy prop, pass empty
           setRegions={() => {}} // legacy prop, do nothing
           onReset={handleReset}
@@ -274,13 +275,22 @@ export default function HomePage() {
         {/* State selector */}
         <StateSelector value={selectedStates} onChange={setSelectedStates} />
 
+        {/* Search Button */}
+        <button
+          onClick={handleSearch}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-2xl text-lg font-bold mt-2 mb-4 shadow-lg transition"
+          style={{ minWidth: "180px" }}
+        >
+          Search
+        </button>
+
         {/* Search Links */}
         {showLinks && (
-          <section className="mt-8 bg-white rounded-xl shadow p-6 w-full max-w-xs">
+          <section className="mt-8 bg-white rounded-xl shadow p-6 w-full max-w-lg">
             <h3 className="text-lg font-bold mb-4 text-center">
               Search Results on Major Sites
             </h3>
-            <ul className="space-y-3 max-h-96 overflow-y-auto">
+            <ul className="space-y-3 max-h-[600px] overflow-y-auto">
               {searchLinks.map((link) => (
                 <li key={link.url}>
                   <a
