@@ -43,13 +43,13 @@ function buildSearchLinks({
     const baseUrl = "https://www.searchtempest.com/search";
     const params = [
       `search_string=${encodeURIComponent(searchTerms + " airplane")}`,
-      "category=8", // 8 = For Sale
+      "category=8", // For Sale
       `region_us=${regionCode}`,
+      "cityselect=region", // <-- This fixes the missing cityselect error!
       minPrice ? `minAsk=${encodeURIComponent(minPrice)}` : "",
       maxPrice ? `maxAsk=${encodeURIComponent(maxPrice)}` : "",
-      // fbmarket=1 enables FB search, cl=1 enables Craigslist search
-      "cl=1",
-      "fbmarket=1",
+      "cl=1", // Craigslist
+      "fbmarket=1", // Facebook Marketplace
     ]
       .filter(Boolean)
       .join("&");
@@ -190,7 +190,9 @@ export default function HomePage() {
               ))}
             </ul>
             <div className="text-xs text-gray-400 mt-4 text-center">
-              These links open the official sites with your search. Craigslist and Facebook links use SearchTempest to combine multiple cities/regions.
+              These links open the official sites with your search.
+              <br />
+              Craigslist and Facebook links use SearchTempest to combine multiple cities/regions.
             </div>
           </section>
         )}
