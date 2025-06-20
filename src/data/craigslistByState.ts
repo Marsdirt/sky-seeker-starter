@@ -1,6 +1,4 @@
-// This is a mapping from state abbreviation to Craigslist city subdomains for that state.
-// You can expand or refine this mapping as needed for your app.
-
+// Sample mapping for a few states; expand this with all Craigslist subdomains as needed
 export const CRAIGSLIST_CITIES_BY_STATE: Record<string, {city: string, subdomain: string}[]> = {
   CA: [
     { city: "Los Angeles", subdomain: "losangeles" },
@@ -13,7 +11,7 @@ export const CRAIGSLIST_CITIES_BY_STATE: Record<string, {city: string, subdomain
     { city: "Ventura", subdomain: "ventura" },
     { city: "Bakersfield", subdomain: "bakersfield" },
     { city: "San Luis Obispo", subdomain: "slo" },
-    // add more as needed...
+    // Add more as needed...
   ],
   WA: [
     { city: "Seattle-Tacoma", subdomain: "seattle" },
@@ -21,7 +19,16 @@ export const CRAIGSLIST_CITIES_BY_STATE: Record<string, {city: string, subdomain
     { city: "Olympic Peninsula", subdomain: "olympic" },
     { city: "Bellingham", subdomain: "bellingham" },
     { city: "Yakima", subdomain: "yakima" },
-    // add more as needed...
+    // Add more as needed...
   ],
-  // ...add all states and their Craigslist subdomains
+  TX: [
+    { city: "Austin", subdomain: "austin" },
+    { city: "Dallas/Fort Worth", subdomain: "dallas" },
+    { city: "Houston", subdomain: "houston" },
+    { city: "San Antonio", subdomain: "sanantonio" },
+    { city: "Corpus Christi", subdomain: "corpuschristi" },
+    { city: "El Paso", subdomain: "elpaso" },
+    // Add more as needed...
+  ],
+  // ...add all states/subdomains for full coverage
 };
