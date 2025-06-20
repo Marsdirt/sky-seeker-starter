@@ -19,7 +19,7 @@ function buildSearchLinks({
   minPrice: string;
   maxPrice: string;
   regions: string[];
-}) {
+}): { name: string; url: string; note?: string }[] {
   const regionObjs = REGIONS.filter((r) => regions.includes(r.name));
   const searchTerms = [brand, model, type !== "" ? type : ""]
     .filter(Boolean)
@@ -38,6 +38,7 @@ function buildSearchLinks({
         return {
           name: `Craigslist (${region.name}: ${subdomain})`,
           url,
+          note: "", // always include note property for type safety
         };
       })
     );
@@ -102,14 +103,17 @@ function buildSearchLinks({
     {
       name: "Barnstormers",
       url: barnstormersUrl,
+      note: "",
     },
     {
       name: "Trade-A-Plane",
       url: tradeAPlaneUrl,
+      note: "",
     },
     {
       name: "Controller",
       url: controllerUrl,
+      note: "",
     },
     ...craigslistLinks,
     ...facebookLinks,
@@ -194,7 +198,7 @@ export default function HomePage() {
                   >
                     {link.name}
                   </a>
-                  {link.note && (
+                  {link.note && link.note !== "" && (
                     <div className="text-xs text-red-500 mt-1 text-center">
                       {link.note}
                     </div>
