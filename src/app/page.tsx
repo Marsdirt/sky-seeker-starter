@@ -21,17 +21,14 @@ function buildSearchLinks({
   regions: string[];
 }): { name: string; url: string; note?: string }[] {
   const regionObjs = REGIONS.filter((r) => regions.includes(r.name));
-  const searchTerms = [brand, model, type !== "" ? type : ""]
-    .filter(Boolean)
-    .join(" ")
-    .replace(/\s+/g, "+");
+  const searchTerms = [brand, model].filter(Boolean).join(" ").replace(/\s+/g, " ");
 
   // Craigslist: one link per selected region/city, using "aircraft"
   const craigslistLinks = regionObjs
     .flatMap((region) =>
       region.craigslist.map((subdomain) => {
         let url = `https://${subdomain}.craigslist.org/search/sss?query=${encodeURIComponent(
-          searchTerms + " aircraft"
+          [brand, model, type].filter(Boolean).join(" ") + " aircraft"
         )}`;
         if (minPrice) url += `&min_price=${encodeURIComponent(minPrice)}`;
         if (maxPrice) url += `&max_price=${encodeURIComponent(maxPrice)}`;
@@ -47,8 +44,7 @@ function buildSearchLinks({
   const facebookLinks = regionObjs
     .flatMap((region) =>
       region.facebookCities.map((city) => {
-        // Try to include price in the search string, but it's not a true filter
-        let fbQuery = searchTerms + " aircraft";
+        let fbQuery = [brand, model, type].filter(Boolean).join(" ") + " aircraft";
         if (minPrice || maxPrice) {
           fbQuery += ` $${minPrice || ""}${minPrice && maxPrice ? "-" : ""}${maxPrice || ""}`;
         }
@@ -65,22 +61,13 @@ function buildSearchLinks({
       })
     );
 
-  // For aviation classifieds, append region name for location context
-  const regionNames = regionObjs.map((r) => r.name).join(" ");
-  const classifiedSearch = [searchTerms, regionNames].filter(Boolean).join(" ");
-
-  // Barnstormers: Use correct keyword param, and support price filters
-  // Add a note to clarify the limitation
+  // Barnstormers: Only brand and model in keyword (no note)
   const barnstormersUrl =
-    classifiedSearch
-      ? `https://www.barnstormers.com/cat_search.php?keyword=${encodeURIComponent(classifiedSearch)}`
+    searchTerms
+      ? `https://www.barnstormers.com/cat_search.php?keyword=${encodeURIComponent(searchTerms)}`
         + (minPrice ? `&min_price=${encodeURIComponent(minPrice)}` : "")
         + (maxPrice ? `&max_price=${encodeURIComponent(maxPrice)}` : "")
       : "https://www.barnstormers.com/cat_search.php";
-
-  const barnstormersNote =
-    "Only keywords and price filters can be pre-filled for Barnstormers. " +
-    "For detailed filtering (model, manufacturer, location, etc.), use the advanced search form after clicking.";
 
   // Trade-A-Plane: Only include make/model if present
   const tapParams = [];
@@ -98,6 +85,7 @@ function buildSearchLinks({
       .join("&");
 
   // Controller: Use the full classified search string
+  const classifiedSearch = [brand, model, type, regionObjs.map((r) => r.name).join(" ")].filter(Boolean).join(" ");
   const controllerUrl = classifiedSearch
     ? `https://www.controller.com/listings/for-sale/?keywords=${encodeURIComponent(
         classifiedSearch
@@ -108,7 +96,7 @@ function buildSearchLinks({
     {
       name: "Barnstormers",
       url: barnstormersUrl,
-      note: barnstormersNote,
+      note: "",
     },
     {
       name: "Trade-A-Plane",
