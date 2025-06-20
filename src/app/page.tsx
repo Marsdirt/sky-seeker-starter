@@ -69,12 +69,18 @@ function buildSearchLinks({
         + (maxPrice ? `&max_price=${encodeURIComponent(maxPrice)}` : "")
       : "https://www.barnstormers.com/cat_search.php";
 
-  // Trade-A-Plane: Use new filtered search URL structure!
+  // Trade-A-Plane: improved URL supporting price, keyword, and s-type
   const keyword = [brand, model, type].filter(Boolean).join(" ").trim();
-  let tradeAPlaneUrl = "https://www.trade-a-plane.com/filtered/search?s-type=aircraft";
+  let tradeAPlaneUrl = "https://www.trade-a-plane.com/search?s-type=aircraft";
   if (keyword) {
     tradeAPlaneUrl += `&s-keyword-search=${encodeURIComponent(keyword.replace(/\s+/g, '+'))}`;
     tradeAPlaneUrl += `&s-original-search=${encodeURIComponent(keyword)}`;
+  }
+  if (minPrice) {
+    tradeAPlaneUrl += `&price-min=${encodeURIComponent(minPrice)}`;
+  }
+  if (maxPrice) {
+    tradeAPlaneUrl += `&price-max=${encodeURIComponent(maxPrice)}`;
   }
 
   // Controller: Use the full classified search string
