@@ -69,12 +69,13 @@ function buildSearchLinks({
   const regionNames = regionObjs.map((r) => r.name).join(" ");
   const classifiedSearch = [searchTerms, regionNames].filter(Boolean).join(" ");
 
-  // Barnstormers: Use only query, no extra parameters
-  const barnstormersUrl = classifiedSearch
-    ? `https://www.barnstormers.com/classifieds?search=${encodeURIComponent(
-        classifiedSearch
-      )}`
-    : "https://www.barnstormers.com/classifieds";
+  // Barnstormers: Use correct keyword param, and support price filters
+  const barnstormersUrl =
+    classifiedSearch
+      ? `https://www.barnstormers.com/cat_search.php?keyword=${encodeURIComponent(classifiedSearch)}`
+        + (minPrice ? `&min_price=${encodeURIComponent(minPrice)}` : "")
+        + (maxPrice ? `&max_price=${encodeURIComponent(maxPrice)}` : "")
+      : "https://www.barnstormers.com/cat_search.php";
 
   // Trade-A-Plane: Only include make/model if present
   const tapParams = [];
