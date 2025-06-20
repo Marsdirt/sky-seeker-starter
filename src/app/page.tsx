@@ -4,7 +4,18 @@ import React, { useState } from "react";
 import AircraftFilter from "../components/AircraftFilter";
 import { REGIONS } from "../data/regions";
 
-// Helper to build search URLs for Craigslist and Facebook (multi-link mode, "aircraft" keyword, price notes)
+// Trade-A-Plane supported categories for category_level1
+const TRADE_A_PLANE_CATEGORIES = [
+  "Single Engine Piston",
+  "Multi Engine Piston",
+  "Turboprop",
+  "Jet",
+  "Helicopter",
+  "Warbird",
+  "Light Sport Aircraft"
+];
+
+// Helper to build search URLs for various marketplaces
 function buildSearchLinks({
   brand,
   model,
@@ -69,13 +80,15 @@ function buildSearchLinks({
         + (maxPrice ? `&max_price=${encodeURIComponent(maxPrice)}` : "")
       : "https://www.barnstormers.com/cat_search.php";
 
-  // Trade-A-Plane: Only include make/model/type if present, avoid empty or unknown params
+  // Trade-A-Plane: only include category_level1 if type is a known value
   let tradeAPlaneUrl = "https://www.trade-a-plane.com/search";
   const tapParams: string[] = [];
-  if (type) tapParams.push(`category_level1=${encodeURIComponent(type)}`);
+  if (type && TRADE_A_PLANE_CATEGORIES.includes(type)) {
+    tapParams.push(`category_level1=${encodeURIComponent(type)}`);
+  }
   if (brand) tapParams.push(`make=${encodeURIComponent(brand)}`);
   if (model) tapParams.push(`model=${encodeURIComponent(model)}`);
-  if (tapParams.length) {
+  if (tapParams.length > 0) {
     tradeAPlaneUrl += "?" + tapParams.join("&");
   }
 
