@@ -1,11 +1,34 @@
 'use client';
 
 import React, { useState } from "react";
+import Select from "react-select";
 import { STATES } from "../data/states";
 import { CRAIGSLIST_CITIES_BY_STATE } from "../data/craigslistByState";
 import { FACEBOOK_CITIES_BY_STATE } from "../data/facebookByState";
 
-// Helper to build Barnstormers advanced search URL (auto search results)
+// Aircraft Types (with "Projects" added)
+const AIRCRAFT_TYPES = [
+  { value: "", label: "All Types" },
+  { value: "Single Engine Piston", label: "Single Engine Piston" },
+  { value: "Multi Engine Piston", label: "Multi Engine Piston" },
+  { value: "Turboprop", label: "Turboprop" },
+  { value: "Jet", label: "Jet" },
+  { value: "Helicopter", label: "Helicopter" },
+  { value: "Experimental", label: "Experimental" },
+  { value: "Light Sport", label: "Light Sport" },
+  { value: "Warbird", label: "Warbird" },
+  { value: "Glider", label: "Glider" },
+  { value: "Amphibious", label: "Amphibious" },
+  { value: "Ultralight", label: "Ultralight" },
+  { value: "Projects", label: "Projects" },
+];
+
+const STATE_OPTIONS = STATES.map(s => ({
+  value: s.abbr,
+  label: s.name
+}));
+
+// Helper functions
 function makeBarnstormersUrl({
   brand,
   model,
@@ -43,7 +66,6 @@ function makeBarnstormersUrl({
   return "https://www.barnstormers.com/cat_search.php?" + params.join("&");
 }
 
-// Helper for Controller search URL with multiple states (pipe-separated)
 function makeControllerUrl({
   brand,
   model,
@@ -85,12 +107,10 @@ function buildSearchLinks({
   maxPrice: string;
   selectedStateAbbrs: string[];
 }): { name: string; url: string; note?: string }[] {
-  // State helpers
   const abbrToName = Object.fromEntries(STATES.map(s => [s.abbr, s.name]));
   const stateNames = selectedStateAbbrs.map(abbr => abbrToName[abbr]);
   const stateAbbrs = selectedStateAbbrs;
 
-  // Craigslist: Maximize coverage by listing every city/subdomain in each selected state
   const craigslistLinks = stateAbbrs.flatMap((abbr) =>
     (CRAIGSLIST_CITIES_BY_STATE[abbr] || []).map(({ city, subdomain }) => {
       let url = `https://${subdomain}.craigslist.org/search/sss?query=${encodeURIComponent(
@@ -106,7 +126,6 @@ function buildSearchLinks({
     })
   );
 
-  // Facebook: Same, all major cities in each selected state
   const facebookLinks = stateAbbrs.flatMap((abbr) =>
     (FACEBOOK_CITIES_BY_STATE[abbr] || []).map((city) => {
       let fbQuery = [brand, model, type].filter(Boolean).join(" ") + " aircraft";
@@ -126,7 +145,6 @@ function buildSearchLinks({
     })
   );
 
-  // Barnstormers: Single link for all selected states (comma-separated)
   const barnstormersUrl = makeBarnstormersUrl({
     brand,
     model,
@@ -135,7 +153,6 @@ function buildSearchLinks({
     stateAbbrs,
   });
 
-  // Trade-A-Plane: No state param, just use full search as before
   const keyword = [brand, model, type].filter(Boolean).join(" ").trim();
   let tradeAPlaneUrl = "https://www.trade-a-plane.com/search?s-type=aircraft";
   if (keyword) {
@@ -149,7 +166,6 @@ function buildSearchLinks({
     tradeAPlaneUrl += `&price-max=${encodeURIComponent(maxPrice)}`;
   }
 
-  // Controller: Single link for all selected states (pipe-separated, uppercase)
   const controllerUrl = makeControllerUrl({
     brand,
     model,
@@ -183,10 +199,10 @@ function buildSearchLinks({
 export default function HomePage() {
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState(""); // value from AIRCRAFT_TYPES
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [selectedStates, setSelectedStates] = useState<string[]>([]);
+  const [selectedStates, setSelectedStates] = useState<{value: string, label: string}[]>([]);
   const [showLinks, setShowLinks] = useState(false);
 
   const handleSearch = () => setShowLinks(true);
@@ -200,40 +216,13 @@ export default function HomePage() {
     setShowLinks(false);
   };
 
-  // State dropdown (tall, with better visibility)
-  function StateSelector({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
-    return (
-      <div className="mb-3 w-full">
-        <label className="block font-semibold mb-1">State(s):</label>
-        <select
-          multiple
-          value={value}
-          onChange={e =>
-            onChange(Array.from(e.target.selectedOptions, option => option.value))
-          }
-          className="border rounded px-2 py-1 w-full h-48 text-base"
-          size={12}
-        >
-          {STATES.map((state) => (
-            <option key={state.abbr} value={state.abbr}>
-              {state.name}
-            </option>
-          ))}
-        </select>
-        <div className="text-xs text-gray-500 mt-1">
-          Hold Ctrl (Windows) or Cmd (Mac) to select multiple states.
-        </div>
-      </div>
-    );
-  }
-
   const searchLinks = buildSearchLinks({
     brand,
     model,
     type,
     minPrice,
     maxPrice,
-    selectedStateAbbrs: selectedStates,
+    selectedStateAbbrs: selectedStates.map(s => s.value),
   });
 
   return (
@@ -250,7 +239,6 @@ export default function HomePage() {
       <div className="flex flex-col items-center">
         <div className="bg-white rounded-xl shadow p-6 w-full max-w-md mb-8">
           <h2 className="text-2xl font-bold mb-4 text-center">Search Every Hangar</h2>
-          {/* Inline all filter fields (no region fields) */}
           <div className="flex flex-col gap-3">
             <div>
               <label className="block font-semibold mb-1">Brand</label>
@@ -272,34 +260,63 @@ export default function HomePage() {
             </div>
             <div>
               <label className="block font-semibold mb-1">Aircraft Type</label>
-              <input
-                className="border rounded px-2 py-1 w-full"
-                value={type}
-                onChange={e => setType(e.target.value)}
-                placeholder="All Types"
+              <Select
+                options={AIRCRAFT_TYPES}
+                value={AIRCRAFT_TYPES.find(t => t.value === type) || AIRCRAFT_TYPES[0]}
+                onChange={o => setType(o?.value || "")}
+                isSearchable
+                className="w-full"
+                classNamePrefix="react-select"
               />
+            </div>
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <label className="block font-semibold mb-1">Min Price</label>
+                <div className="relative">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                  <input
+                    className="border rounded pl-6 pr-2 py-1 w-full"
+                    value={minPrice}
+                    onChange={e => setMinPrice(e.target.value)}
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+              <div className="flex-1">
+                <label className="block font-semibold mb-1">Max Price</label>
+                <div className="relative">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                  <input
+                    className="border rounded pl-6 pr-2 py-1 w-full"
+                    value={maxPrice}
+                    onChange={e => setMaxPrice(e.target.value)}
+                    type="number"
+                    min="0"
+                    placeholder="100000"
+                  />
+                </div>
+              </div>
             </div>
             <div>
-              <label className="block font-semibold mb-1">Min Price</label>
-              <input
-                className="border rounded px-2 py-1 w-full"
-                value={minPrice}
-                onChange={e => setMinPrice(e.target.value)}
-                type="number"
-                min="0"
+              <label className="block font-semibold mb-1">State(s):</label>
+              <Select
+                options={STATE_OPTIONS}
+                value={selectedStates}
+                onChange={opts => setSelectedStates(opts as {value: string, label: string}[])}
+                isMulti
+                isSearchable
+                placeholder="Select state(s)..."
+                className="w-full"
+                classNamePrefix="react-select"
+                closeMenuOnSelect={false}
+                hideSelectedOptions={false}
               />
+              <div className="text-xs text-gray-500 mt-1">
+                You can search and select multiple states.
+              </div>
             </div>
-            <div>
-              <label className="block font-semibold mb-1">Max Price</label>
-              <input
-                className="border rounded px-2 py-1 w-full"
-                value={maxPrice}
-                onChange={e => setMaxPrice(e.target.value)}
-                type="number"
-                min="0"
-              />
-            </div>
-            <StateSelector value={selectedStates} onChange={setSelectedStates} />
             <div className="flex gap-3 justify-center mt-2">
               <button
                 onClick={handleReset}
