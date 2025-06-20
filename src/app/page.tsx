@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import AircraftFilter from "../components/AircraftFilter";
-import { REGIONS } from "../data/regions";
+import { STATES } from "../data/states";
+import { CRAIGSLIST_CITIES_BY_STATE } from "../data/craigslistByState";
+import { FACEBOOK_CITIES_BY_STATE } from "../data/facebookByState";
 
 // Helper to build Barnstormers advanced search URL (auto search results)
 function makeBarnstormersUrl({
@@ -10,11 +12,13 @@ function makeBarnstormersUrl({
   model,
   minPrice,
   maxPrice,
+  stateAbbrs,
 }: {
   brand: string;
   model: string;
   minPrice: string;
   maxPrice: string;
+  stateAbbrs: string[];
 }) {
   const params = [
     `headline=`,
@@ -26,7 +30,7 @@ function makeBarnstormersUrl({
     `user__last_name=`,
     `user__first_name=`,
     `user__profile__country=`,
-    `specialcase__state=`,
+    `specialcase__state=${encodeURIComponent(stateAbbrs.join(", "))}`,
     `user__profile__city=`,
     `user__profile__uzip=`,
     `specialcase__phone=`,
@@ -40,72 +44,99 @@ function makeBarnstormersUrl({
   return "https://www.barnstormers.com/cat_search.php?" + params.join("&");
 }
 
-// Helper to build search URLs for various marketplaces
-function buildSearchLinks({
+// Helper for Controller search URL with multiple states (pipe-separated)
+function makeControllerUrl({
   brand,
   model,
   type,
   minPrice,
   maxPrice,
-  regions,
+  stateNames,
 }: {
   brand: string;
   model: string;
   type: string;
   minPrice: string;
   maxPrice: string;
-  regions: string[];
+  stateNames: string[];
+}) {
+  const searchTerms = [brand, model, type].filter(Boolean).join(" ");
+  let url = `https://www.controller.com/listings/search?keywords=${encodeURIComponent(searchTerms)}`;
+  if (minPrice || maxPrice) {
+    url += `&Price=${encodeURIComponent(`${minPrice || ""}*${maxPrice || ""}`)}`;
+  }
+  if (stateNames.length) {
+    url += `&State=${encodeURIComponent(stateNames.join("|").toUpperCase())}`;
+  }
+  return url;
+}
+
+function buildSearchLinks({
+  brand,
+  model,
+  type,
+  minPrice,
+  maxPrice,
+  selectedStateAbbrs,
+}: {
+  brand: string;
+  model: string;
+  type: string;
+  minPrice: string;
+  maxPrice: string;
+  selectedStateAbbrs: string[];
 }): { name: string; url: string; note?: string }[] {
-  const regionObjs = REGIONS.filter((r) => regions.includes(r.name));
-  const searchTerms = [brand, model].filter(Boolean).join(" ").replace(/\s+/g, " ");
+  // State helpers
+  const abbrToName = Object.fromEntries(STATES.map(s => [s.abbr, s.name]));
+  const stateNames = selectedStateAbbrs.map(abbr => abbrToName[abbr]);
+  const stateAbbrs = selectedStateAbbrs;
 
-  // Craigslist: one link per selected region/city, using "aircraft"
-  const craigslistLinks = regionObjs
-    .flatMap((region) =>
-      region.craigslist.map((subdomain) => {
-        let url = `https://${subdomain}.craigslist.org/search/sss?query=${encodeURIComponent(
-          [brand, model, type].filter(Boolean).join(" ") + " aircraft"
-        )}`;
-        if (minPrice) url += `&min_price=${encodeURIComponent(minPrice)}`;
-        if (maxPrice) url += `&max_price=${encodeURIComponent(maxPrice)}`;
-        return {
-          name: `Craigslist (${region.name}: ${subdomain})`,
-          url,
-          note: "",
-        };
-      })
-    );
+  // Craigslist: Maximize coverage by listing every city/subdomain in each selected state
+  const craigslistLinks = stateAbbrs.flatMap((abbr) =>
+    (CRAIGSLIST_CITIES_BY_STATE[abbr] || []).map(({ city, subdomain }) => {
+      let url = `https://${subdomain}.craigslist.org/search/sss?query=${encodeURIComponent(
+        [brand, model, type].filter(Boolean).join(" ") + " aircraft"
+      )}`;
+      if (minPrice) url += `&min_price=${encodeURIComponent(minPrice)}`;
+      if (maxPrice) url += `&max_price=${encodeURIComponent(maxPrice)}`;
+      return {
+        name: `Craigslist (${city})`,
+        url,
+        note: "",
+      };
+    })
+  );
 
-  // Facebook: one link per region's major city, use "aircraft" and suggest user filter price manually
-  const facebookLinks = regionObjs
-    .flatMap((region) =>
-      region.facebookCities.map((city) => {
-        let fbQuery = [brand, model, type].filter(Boolean).join(" ") + " aircraft";
-        if (minPrice || maxPrice) {
-          fbQuery += ` $${minPrice || ""}${minPrice && maxPrice ? "-" : ""}${maxPrice || ""}`;
-        }
-        return {
-          name: `Facebook Marketplace (${city})`,
-          url: `https://www.facebook.com/marketplace/search/?query=${encodeURIComponent(
-            fbQuery
-          )}&location=${encodeURIComponent(city)}`,
-          note:
-            minPrice || maxPrice
-              ? "Note: Facebook Marketplace does not support price filters in the URL. Please use the price filter on Facebook."
-              : "",
-        };
-      })
-    );
+  // Facebook: Same, all major cities in each selected state
+  const facebookLinks = stateAbbrs.flatMap((abbr) =>
+    (FACEBOOK_CITIES_BY_STATE[abbr] || []).map((city) => {
+      let fbQuery = [brand, model, type].filter(Boolean).join(" ") + " aircraft";
+      if (minPrice || maxPrice) {
+        fbQuery += ` $${minPrice || ""}${minPrice && maxPrice ? "-" : ""}${maxPrice || ""}`;
+      }
+      return {
+        name: `Facebook Marketplace (${city})`,
+        url: `https://www.facebook.com/marketplace/search/?query=${encodeURIComponent(
+          fbQuery
+        )}&location=${encodeURIComponent(city)}`,
+        note:
+          minPrice || maxPrice
+            ? "Note: Facebook Marketplace does not support price filters in the URL. Please use the price filter on Facebook."
+            : "",
+      };
+    })
+  );
 
-  // Barnstormers: Use advanced search URL with all params for direct results
+  // Barnstormers: Single link for all selected states (comma-separated)
   const barnstormersUrl = makeBarnstormersUrl({
     brand,
     model,
     minPrice,
     maxPrice,
+    stateAbbrs,
   });
 
-  // Trade-A-Plane: improved URL supporting price, keyword, and s-type
+  // Trade-A-Plane: No state param, just use full search as before
   const keyword = [brand, model, type].filter(Boolean).join(" ").trim();
   let tradeAPlaneUrl = "https://www.trade-a-plane.com/search?s-type=aircraft";
   if (keyword) {
@@ -119,13 +150,15 @@ function buildSearchLinks({
     tradeAPlaneUrl += `&price-max=${encodeURIComponent(maxPrice)}`;
   }
 
-  // Controller: Use the full classified search string
-  const classifiedSearch = [brand, model, type, regionObjs.map((r) => r.name).join(" ")].filter(Boolean).join(" ");
-  const controllerUrl = classifiedSearch
-    ? `https://www.controller.com/listings/for-sale/?keywords=${encodeURIComponent(
-        classifiedSearch
-      )}`
-    : "https://www.controller.com/listings/for-sale/";
+  // Controller: Single link for all selected states (pipe-separated, uppercase)
+  const controllerUrl = makeControllerUrl({
+    brand,
+    model,
+    type,
+    minPrice,
+    maxPrice,
+    stateNames,
+  });
 
   return [
     {
@@ -154,7 +187,7 @@ export default function HomePage() {
   const [type, setType] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [regions, setRegions] = useState<string[]>([]);
+  const [selectedStates, setSelectedStates] = useState<string[]>([]);
   const [showLinks, setShowLinks] = useState(false);
 
   const handleSearch = () => {
@@ -167,9 +200,37 @@ export default function HomePage() {
     setType("");
     setMinPrice("");
     setMaxPrice("");
-    setRegions([]);
+    setSelectedStates([]);
     setShowLinks(false);
   };
+
+  // Multi-select dropdown for states
+  function StateSelector({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
+    return (
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">State(s):</label>
+        <select
+          multiple
+          value={value}
+          onChange={e =>
+            onChange(
+              Array.from(e.target.selectedOptions, option => option.value)
+            )
+          }
+          className="border rounded px-2 py-1 w-64 h-32"
+        >
+          {STATES.map((state) => (
+            <option key={state.abbr} value={state.abbr}>
+              {state.name}
+            </option>
+          ))}
+        </select>
+        <div className="text-xs text-gray-500 mt-1">
+          Hold Ctrl (Windows) or Cmd (Mac) to select multiple states.
+        </div>
+      </div>
+    );
+  }
 
   const searchLinks = buildSearchLinks({
     brand,
@@ -177,7 +238,7 @@ export default function HomePage() {
     type,
     minPrice,
     maxPrice,
-    regions,
+    selectedStateAbbrs: selectedStates,
   });
 
   return (
@@ -203,11 +264,15 @@ export default function HomePage() {
           setMinPrice={setMinPrice}
           maxPrice={maxPrice}
           setMaxPrice={setMaxPrice}
-          regions={regions}
-          setRegions={setRegions}
+          // Remove regions and use states
+          regions={[]} // legacy prop, pass empty
+          setRegions={() => {}} // legacy prop, do nothing
           onReset={handleReset}
           onSearch={handleSearch}
         />
+
+        {/* State selector */}
+        <StateSelector value={selectedStates} onChange={setSelectedStates} />
 
         {/* Search Links */}
         {showLinks && (
@@ -215,7 +280,7 @@ export default function HomePage() {
             <h3 className="text-lg font-bold mb-4 text-center">
               Search Results on Major Sites
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-3 max-h-96 overflow-y-auto">
               {searchLinks.map((link) => (
                 <li key={link.url}>
                   <a
@@ -235,9 +300,7 @@ export default function HomePage() {
               ))}
             </ul>
             <div className="text-xs text-gray-400 mt-4 text-center">
-              These links open the official sites with your search.
-              <br />
-              Craigslist and Facebook links are provided separately for each major city/area in your selected region(s).
+              Craigslist and Facebook links are provided for every major city/metro area in your selected state(s).
               <br />
               <span className="text-red-500">
                 Facebook Marketplace does not currently support price filters in the search URL; please use the price filter on Facebook after clicking the link.
