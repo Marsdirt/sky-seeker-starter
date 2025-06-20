@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import AircraftFilter from "../components/AircraftFilter";
 import { REGIONS } from "../data/regions";
 
-// Helper to build search URLs for Craigslist and Facebook (multi-link mode)
+// Helper to build search URLs for Craigslist and Facebook (multi-link mode, "aircraft" keyword, price notes)
 function buildSearchLinks({
   brand,
   model,
@@ -26,12 +26,12 @@ function buildSearchLinks({
     .join(" ")
     .replace(/\s+/g, "+");
 
-  // Craigslist: one link per selected region/city
+  // Craigslist: one link per selected region/city, using "aircraft"
   const craigslistLinks = regionObjs
     .flatMap((region) =>
       region.craigslist.map((subdomain) => {
         let url = `https://${subdomain}.craigslist.org/search/sss?query=${encodeURIComponent(
-          searchTerms + " airplane"
+          searchTerms + " aircraft"
         )}`;
         if (minPrice) url += `&min_price=${encodeURIComponent(minPrice)}`;
         if (maxPrice) url += `&max_price=${encodeURIComponent(maxPrice)}`;
@@ -42,16 +42,24 @@ function buildSearchLinks({
       })
     );
 
-  // Facebook: one link per region's major city
+  // Facebook: one link per region's major city, use "aircraft" and suggest user filter price manually
   const facebookLinks = regionObjs
     .flatMap((region) =>
       region.facebookCities.map((city) => {
-        // Facebook Marketplace does not support price in search URL, so only pass query and location
+        // Try to include price in the search string, but it's not a true filter
+        let fbQuery = searchTerms + " aircraft";
+        if (minPrice || maxPrice) {
+          fbQuery += ` $${minPrice || ""}${minPrice && maxPrice ? "-" : ""}${maxPrice || ""}`;
+        }
         return {
           name: `Facebook Marketplace (${city})`,
           url: `https://www.facebook.com/marketplace/search/?query=${encodeURIComponent(
-            searchTerms + " airplane"
+            fbQuery
           )}&location=${encodeURIComponent(city)}`,
+          note:
+            minPrice || maxPrice
+              ? "Note: Facebook Marketplace does not support price filters in the URL. Please use the price filter on Facebook."
+              : "",
         };
       })
     );
@@ -186,6 +194,11 @@ export default function HomePage() {
                   >
                     {link.name}
                   </a>
+                  {link.note && (
+                    <div className="text-xs text-red-500 mt-1 text-center">
+                      {link.note}
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
@@ -193,6 +206,10 @@ export default function HomePage() {
               These links open the official sites with your search.
               <br />
               Craigslist and Facebook links are provided separately for each major city/area in your selected region(s).
+              <br />
+              <span className="text-red-500">
+                Facebook Marketplace does not currently support price filters in the search URL; please use the price filter on Facebook after clicking the link.
+              </span>
             </div>
           </section>
         )}
