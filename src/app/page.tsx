@@ -4,16 +4,31 @@ import React, { useState } from "react";
 import AircraftFilter from "../components/AircraftFilter";
 import { REGIONS } from "../data/regions";
 
-// Helper to build search URLs
+// Map your regions to SearchTempest region codes
+const SEARCHTEMPEST_REGION_CODES: Record<string, string> = {
+  "Pacific Northwest": "pnw",
+  "Southwest": "sw",
+  "Rocky Mountains": "rmtn",
+  "Midwest": "mw",
+  "Northeast": "ne",
+  "Southeast": "se",
+  "South Central/Texas": "sc",
+  "Alaska/Hawaii": "ak",
+};
+
 function buildSearchLinks({
   brand,
   model,
   type,
+  minPrice,
+  maxPrice,
   regions,
 }: {
   brand: string;
   model: string;
   type: string;
+  minPrice: string;
+  maxPrice: string;
   regions: string[];
 }) {
   const regionObjs = REGIONS.filter((r) => regions.includes(r.name));
@@ -22,53 +37,74 @@ function buildSearchLinks({
     .join(" ")
     .replace(/\s+/g, "+");
 
-  // Craigslist: one link per selected region/city
-  const craigslistLinks = regionObjs
-    .flatMap((region) =>
-      region.craigslist.map((subdomain) => ({
-        name: `Craigslist (${region.name}: ${subdomain})`,
-        url: `https://${subdomain}.craigslist.org/search/sss?query=${encodeURIComponent(
-          searchTerms + " airplane"
-        )}`,
-      }))
-    );
-
-  // Facebook: one link per region's major city
-  const facebookLinks = regionObjs
-    .flatMap((region) =>
-      region.facebookCities.map((city) => ({
-        name: `Facebook Marketplace (${city})`,
-        url: `https://www.facebook.com/marketplace/search/?query=${encodeURIComponent(
-          searchTerms + " airplane"
-        )}&location=${encodeURIComponent(city)}`,
-      }))
-    );
+  // Generate one SearchTempest Craigslist/Facebook link per region
+  const searchTempestLinks = regionObjs.map((region) => {
+    const regionCode = SEARCHTEMPEST_REGION_CODES[region.name] || "";
+    const baseUrl = "https://www.searchtempest.com/search";
+    const params = [
+      `search_string=${encodeURIComponent(searchTerms + " airplane")}`,
+      "category=8", // 8 = For Sale
+      `region_us=${regionCode}`,
+      minPrice ? `minAsk=${encodeURIComponent(minPrice)}` : "",
+      maxPrice ? `maxAsk=${encodeURIComponent(maxPrice)}` : "",
+      // fbmarket=1 enables FB search, cl=1 enables Craigslist search
+      "cl=1",
+      "fbmarket=1",
+    ]
+      .filter(Boolean)
+      .join("&");
+    return {
+      name: `Craigslist & Facebook (All ${region.name}) via SearchTempest`,
+      url: `${baseUrl}?${params}`,
+    };
+  });
 
   // For aviation classifieds, append region name for location context
   const regionNames = regionObjs.map((r) => r.name).join(" ");
   const classifiedSearch = [searchTerms, regionNames].filter(Boolean).join(" ");
 
+  // Barnstormers: Use only query, no extra parameters
+  const barnstormersUrl = classifiedSearch
+    ? `https://www.barnstormers.com/classifieds?search=${encodeURIComponent(
+        classifiedSearch
+      )}`
+    : "https://www.barnstormers.com/classifieds";
+
+  // Trade-A-Plane: Only include make/model if present
+  const tapParams = [];
+  if (brand) tapParams.push(`make=${encodeURIComponent(brand)}`);
+  if (model) tapParams.push(`model=${encodeURIComponent(model)}`);
+  // type/category can be added if you map them to Trade-A-Plane's categories
+
+  const tradeAPlaneUrl =
+    "https://www.trade-a-plane.com/search?" +
+    [
+      tapParams.join("&"),
+      "listing_id=",
+      "search_type=aircraft",
+    ].filter(Boolean).join("&");
+
+  // Controller: Use the full classified search string
+  const controllerUrl = classifiedSearch
+    ? `https://www.controller.com/listings/for-sale/?keywords=${encodeURIComponent(
+        classifiedSearch
+      )}`
+    : "https://www.controller.com/listings/for-sale/";
+
   return [
     {
       name: "Barnstormers",
-      url: `https://www.barnstormers.com/classifieds?search=${encodeURIComponent(
-        classifiedSearch
-      )}`,
+      url: barnstormersUrl,
     },
     {
       name: "Trade-A-Plane",
-      url: `https://www.trade-a-plane.com/search?category_level1=&make=${encodeURIComponent(
-        brand
-      )}&model=${encodeURIComponent(model)}&listing_id=&search_type=aircraft`,
+      url: tradeAPlaneUrl,
     },
     {
       name: "Controller",
-      url: `https://www.controller.com/listings/for-sale/?keywords=${encodeURIComponent(
-        classifiedSearch
-      )}`,
+      url: controllerUrl,
     },
-    ...craigslistLinks,
-    ...facebookLinks,
+    ...searchTempestLinks,
   ];
 }
 
@@ -95,7 +131,14 @@ export default function HomePage() {
     setShowLinks(false);
   };
 
-  const searchLinks = buildSearchLinks({ brand, model, type, regions });
+  const searchLinks = buildSearchLinks({
+    brand,
+    model,
+    type,
+    minPrice,
+    maxPrice,
+    regions,
+  });
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -147,7 +190,7 @@ export default function HomePage() {
               ))}
             </ul>
             <div className="text-xs text-gray-400 mt-4 text-center">
-              These links open the official sites with your search.
+              These links open the official sites with your search. Craigslist and Facebook links use SearchTempest to combine multiple cities/regions.
             </div>
           </section>
         )}
