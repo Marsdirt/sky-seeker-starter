@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import RegionMultiSelect from "./RegionMultiSelect";
 
 const AIRCRAFT_TYPES = [
   "All Types",
@@ -11,96 +12,103 @@ const AIRCRAFT_TYPES = [
   "Light Sport/LSA",
   "Warbird/Antique",
   "Bush Plane",
-  "Amphibious/Float"
+  "Amphibious/Float",
 ];
 
+type AircraftFilterProps = {
+  brand: string;
+  setBrand: (v: string) => void;
+  model: string;
+  setModel: (v: string) => void;
+  type: string;
+  setType: (v: string) => void;
+  minPrice: string;
+  setMinPrice: (v: string) => void;
+  maxPrice: string;
+  setMaxPrice: (v: string) => void;
+  regions: string[];
+  setRegions: (v: string[]) => void;
+  onReset: () => void;
+  onSearch: () => void;
+};
+
 export default function AircraftFilter({
-  brand, setBrand,
-  model, setModel,
-  type, setType,
-  minPrice, setMinPrice,
-  maxPrice, setMaxPrice,
-  region, setRegion,
+  brand,
+  setBrand,
+  model,
+  setModel,
+  type,
+  setType,
+  minPrice,
+  setMinPrice,
+  maxPrice,
+  setMaxPrice,
+  regions,
+  setRegions,
   onReset,
-  onSearch
-}: {
-  brand: string, setBrand: (v: string) => void,
-  model: string, setModel: (v: string) => void,
-  type: string, setType: (v: string) => void,
-  minPrice: string, setMinPrice: (v: string) => void,
-  maxPrice: string, setMaxPrice: (v: string) => void,
-  region: string, setRegion: (v: string) => void,
-  onReset: () => void,
-  onSearch: () => void
-}) {
+  onSearch,
+}: AircraftFilterProps) {
   return (
     <aside className="bg-white rounded-2xl shadow p-6 w-full max-w-xs mx-auto">
-      <h2 className="text-lg font-bold mb-6">
-        Search Every Hangar
-      </h2>
+      <h2 className="text-lg font-bold mb-6">Search Every Hangar</h2>
       <div className="mb-4 flex gap-3">
         <div className="flex-1">
-          <label className="block font-semibold mb-6">Brand</label>
+          <label className="block font-semibold mb-3">Brand</label>
           <input
             className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 placeholder-gray-400"
             placeholder="e.g., Cessna, F"
             value={brand}
-            onChange={e => setBrand(e.target.value)}
+            onChange={(e) => setBrand(e.target.value)}
           />
         </div>
         <div className="flex-1">
-          <label className="block font-semibold mb-6">Model</label>
+          <label className="block font-semibold mb-3">Model</label>
           <input
             className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 placeholder-gray-400"
             placeholder="e.g., 172, SR22"
             value={model}
-            onChange={e => setModel(e.target.value)}
+            onChange={(e) => setModel(e.target.value)}
           />
         </div>
       </div>
       <div className="mb-4">
-        <label className="block font-semibold mb-6">Aircraft Type</label>
+        <label className="block font-semibold mb-3">Aircraft Type</label>
         <select
           className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2"
           value={type}
-          onChange={e => setType(e.target.value)}
+          onChange={(e) => setType(e.target.value)}
         >
           {AIRCRAFT_TYPES.map((t) => (
-            <option key={t} value={t === "All Types" ? "" : t}>{t}</option>
+            <option key={t} value={t === "All Types" ? "" : t}>
+              {t}
+            </option>
           ))}
         </select>
       </div>
       <div className="mb-4 flex gap-3">
         <div className="flex-1">
-          <label className="block font-semibold mb-6">Min Price</label>
+          <label className="block font-semibold mb-3">Min Price</label>
           <input
             className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 placeholder-gray-400"
             placeholder="$ e.g., 50,000"
             value={minPrice}
-            onChange={e => setMinPrice(e.target.value)}
+            onChange={(e) => setMinPrice(e.target.value)}
             type="number"
           />
         </div>
         <div className="flex-1">
-          <label className="block font-semibold mb-6">Max Price</label>
+          <label className="block font-semibold mb-3">Max Price</label>
           <input
             className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 placeholder-gray-400"
             placeholder="$ e.g., 200,000"
             value={maxPrice}
-            onChange={e => setMaxPrice(e.target.value)}
+            onChange={(e) => setMaxPrice(e.target.value)}
             type="number"
           />
         </div>
       </div>
-      <div className="mb-6">
-        <label className="block font-semibold mb-6">Regional Location</label>
-        <input
-          className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 placeholder-gray-400"
-          placeholder="e.g., California, Midwest"
-          value={region}
-          onChange={e => setRegion(e.target.value)}
-        />
-      </div>
+      {/* Region Multi-select */}
+      <RegionMultiSelect selected={regions} setSelected={setRegions} />
       <div className="flex gap-2 mt-2">
         <button
           className="flex-1 border border-gray-300 rounded-lg px-4 py-2 font-bold text-gray-700 bg-white hover:bg-gray-100 transition"
