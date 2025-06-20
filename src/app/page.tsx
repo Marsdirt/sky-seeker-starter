@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import AircraftFilter from '../components/AircraftFilter';
 
-// Example data for results cards
 const exampleResults = [
   {
     title: 'Cessna 172 Skyhawk',
@@ -44,7 +43,7 @@ export default function HomePage() {
   const [results, setResults] = useState<typeof exampleResults>([]);
 
   const handleSearch = () => {
-    setResults(exampleResults); // Later: filter based on user input
+    setResults(exampleResults);
   };
 
   const handleReset = () => {
