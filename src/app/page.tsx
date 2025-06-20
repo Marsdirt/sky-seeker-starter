@@ -38,7 +38,7 @@ function buildSearchLinks({
         return {
           name: `Craigslist (${region.name}: ${subdomain})`,
           url,
-          note: "", // always include note property for type safety
+          note: "",
         };
       })
     );
@@ -70,6 +70,7 @@ function buildSearchLinks({
   const classifiedSearch = [searchTerms, regionNames].filter(Boolean).join(" ");
 
   // Barnstormers: Use correct keyword param, and support price filters
+  // Add a note to clarify the limitation
   const barnstormersUrl =
     classifiedSearch
       ? `https://www.barnstormers.com/cat_search.php?keyword=${encodeURIComponent(classifiedSearch)}`
@@ -77,11 +78,14 @@ function buildSearchLinks({
         + (maxPrice ? `&max_price=${encodeURIComponent(maxPrice)}` : "")
       : "https://www.barnstormers.com/cat_search.php";
 
+  const barnstormersNote =
+    "Only keywords and price filters can be pre-filled for Barnstormers. " +
+    "For detailed filtering (model, manufacturer, location, etc.), use the advanced search form after clicking.";
+
   // Trade-A-Plane: Only include make/model if present
   const tapParams = [];
   if (brand) tapParams.push(`make=${encodeURIComponent(brand)}`);
   if (model) tapParams.push(`model=${encodeURIComponent(model)}`);
-  // type/category can be added if you map them to Trade-A-Plane's categories
 
   const tradeAPlaneUrl =
     "https://www.trade-a-plane.com/search?" +
@@ -104,7 +108,7 @@ function buildSearchLinks({
     {
       name: "Barnstormers",
       url: barnstormersUrl,
-      note: "",
+      note: barnstormersNote,
     },
     {
       name: "Trade-A-Plane",
