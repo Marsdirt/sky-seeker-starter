@@ -1,6 +1,4 @@
-// This is a mapping from state abbreviation to major Facebook Marketplace cities (by name).
-// You can expand or refine as needed.
-
+// Sample mapping for a few states; expand this with all major Facebook Marketplace cities as needed
 export const FACEBOOK_CITIES_BY_STATE: Record<string, string[]> = {
   CA: [
     "Los Angeles, California",
@@ -9,14 +7,21 @@ export const FACEBOOK_CITIES_BY_STATE: Record<string, string[]> = {
     "Sacramento, California",
     "Fresno, California",
     "Irvine, California",
-    // add more as needed...
+    // Add more as needed...
   ],
   WA: [
     "Seattle, Washington",
     "Tacoma, Washington",
     "Spokane, Washington",
     "Bellevue, Washington",
-    // add more as needed...
+    // Add more as needed...
   ],
-  // ...add all states and their major cities
+  TX: [
+    "Austin, Texas",
+    "Dallas, Texas",
+    "Houston, Texas",
+    "San Antonio, Texas",
+    // Add more as needed...
+  ],
+  // ...add all states/cities for full coverage
 };
