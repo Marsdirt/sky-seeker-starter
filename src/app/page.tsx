@@ -4,17 +4,6 @@ import React, { useState } from "react";
 import AircraftFilter from "../components/AircraftFilter";
 import { REGIONS } from "../data/regions";
 
-// Trade-A-Plane supported categories for category_level1
-const TRADE_A_PLANE_CATEGORIES = [
-  "Single Engine Piston",
-  "Multi Engine Piston",
-  "Turboprop",
-  "Jet",
-  "Helicopter",
-  "Warbird",
-  "Light Sport Aircraft"
-];
-
 // Helper to build search URLs for various marketplaces
 function buildSearchLinks({
   brand,
@@ -80,16 +69,12 @@ function buildSearchLinks({
         + (maxPrice ? `&max_price=${encodeURIComponent(maxPrice)}` : "")
       : "https://www.barnstormers.com/cat_search.php";
 
-  // Trade-A-Plane: only include category_level1 if type is a known value
-  let tradeAPlaneUrl = "https://www.trade-a-plane.com/search";
-  const tapParams: string[] = [];
-  if (type && TRADE_A_PLANE_CATEGORIES.includes(type)) {
-    tapParams.push(`category_level1=${encodeURIComponent(type)}`);
-  }
-  if (brand) tapParams.push(`make=${encodeURIComponent(brand)}`);
-  if (model) tapParams.push(`model=${encodeURIComponent(model)}`);
-  if (tapParams.length > 0) {
-    tradeAPlaneUrl += "?" + tapParams.join("&");
+  // Trade-A-Plane: Use new filtered search URL structure!
+  const keyword = [brand, model, type].filter(Boolean).join(" ").trim();
+  let tradeAPlaneUrl = "https://www.trade-a-plane.com/filtered/search?s-type=aircraft";
+  if (keyword) {
+    tradeAPlaneUrl += `&s-keyword-search=${encodeURIComponent(keyword.replace(/\s+/g, '+'))}`;
+    tradeAPlaneUrl += `&s-original-search=${encodeURIComponent(keyword)}`;
   }
 
   // Controller: Use the full classified search string
