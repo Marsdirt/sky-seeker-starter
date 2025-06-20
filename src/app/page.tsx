@@ -61,13 +61,16 @@ function buildSearchLinks({
       })
     );
 
-  // Barnstormers: Only brand and model in keyword (no note)
-  const barnstormersUrl =
-    searchTerms
-      ? `https://www.barnstormers.com/cat_search.php?keyword=${encodeURIComponent(searchTerms)}`
-        + (minPrice ? `&min_price=${encodeURIComponent(minPrice)}` : "")
-        + (maxPrice ? `&max_price=${encodeURIComponent(maxPrice)}` : "")
-      : "https://www.barnstormers.com/cat_search.php";
+  // Barnstormers: Use /cat_search.php with mfg, model, price__gte, price__lte
+  const barnstormersParams: string[] = [];
+  if (brand) barnstormersParams.push(`mfg=${encodeURIComponent(brand)}`);
+  if (model) barnstormersParams.push(`model=${encodeURIComponent(model)}`);
+  if (minPrice) barnstormersParams.push(`price__gte=${encodeURIComponent(minPrice)}`);
+  if (maxPrice) barnstormersParams.push(`price__lte=${encodeURIComponent(maxPrice)}`);
+  let barnstormersUrl = "https://www.barnstormers.com/cat_search.php";
+  if (barnstormersParams.length) {
+    barnstormersUrl += "?" + barnstormersParams.join("&");
+  }
 
   // Trade-A-Plane: improved URL supporting price, keyword, and s-type
   const keyword = [brand, model, type].filter(Boolean).join(" ").trim();
