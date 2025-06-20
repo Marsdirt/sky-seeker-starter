@@ -36,11 +36,11 @@ export default function AircraftFilter({
   return (
     <aside className="bg-white rounded-2xl shadow p-6 w-full max-w-xs mx-auto">
       <h2 className="text-lg font-bold mb-6">
-        Filter Aircraft
+        Search Every Hangar
       </h2>
       <div className="mb-4 flex gap-3">
         <div className="flex-1">
-          <label className="block font-semibold mb-1">Brand</label>
+          <label className="block font-semibold mb-2">Brand</label>
           <input
             className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 placeholder-gray-400"
             placeholder="e.g., Cessna, F"
@@ -49,7 +49,7 @@ export default function AircraftFilter({
           />
         </div>
         <div className="flex-1">
-          <label className="block font-semibold mb-1">Model</label>
+          <label className="block font-semibold mb-2">Model</label>
           <input
             className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 placeholder-gray-400"
             placeholder="e.g., 172, SR22"
@@ -59,7 +59,7 @@ export default function AircraftFilter({
         </div>
       </div>
       <div className="mb-4">
-        <label className="block font-semibold mb-1">Aircraft Type</label>
+        <label className="block font-semibold mb-2">Aircraft Type</label>
         <select
           className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2"
           value={type}
@@ -72,7 +72,7 @@ export default function AircraftFilter({
       </div>
       <div className="mb-4 flex gap-3">
         <div className="flex-1">
-          <label className="block font-semibold mb-1">Min Price</label>
+          <label className="block font-semibold mb-2">Min Price</label>
           <input
             className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 placeholder-gray-400"
             placeholder="$ e.g., 50,000"
@@ -82,7 +82,7 @@ export default function AircraftFilter({
           />
         </div>
         <div className="flex-1">
-          <label className="block font-semibold mb-1">Max Price</label>
+          <label className="block font-semibold mb-2">Max Price</label>
           <input
             className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 placeholder-gray-400"
             placeholder="$ e.g., 200,000"
@@ -93,7 +93,7 @@ export default function AircraftFilter({
         </div>
       </div>
       <div className="mb-6">
-        <label className="block font-semibold mb-1">Regional Location</label>
+        <label className="block font-semibold mb-2">Regional Location</label>
         <input
           className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 placeholder-gray-400"
           placeholder="e.g., California, Midwest"
