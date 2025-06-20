@@ -4,18 +4,7 @@ import React, { useState } from "react";
 import AircraftFilter from "../components/AircraftFilter";
 import { REGIONS } from "../data/regions";
 
-// Map your regions to SearchTempest region codes
-const SEARCHTEMPEST_REGION_CODES: Record<string, string> = {
-  "Pacific Northwest": "pnw",
-  "Southwest": "sw",
-  "Rocky Mountains": "rmtn",
-  "Midwest": "mw",
-  "Northeast": "ne",
-  "Southeast": "se",
-  "South Central/Texas": "sc",
-  "Alaska/Hawaii": "ak",
-};
-
+// Helper to build search URLs for Craigslist and Facebook (multi-link mode)
 function buildSearchLinks({
   brand,
   model,
@@ -37,27 +26,35 @@ function buildSearchLinks({
     .join(" ")
     .replace(/\s+/g, "+");
 
-  // Generate one SearchTempest Craigslist/Facebook link per region
-  const searchTempestLinks = regionObjs.map((region) => {
-    const regionCode = SEARCHTEMPEST_REGION_CODES[region.name] || "";
-    const baseUrl = "https://www.searchtempest.com/search";
-    const params = [
-      `search_string=${encodeURIComponent(searchTerms + " airplane")}`,
-      "category=8", // For Sale
-      `region_us=${regionCode}`,
-      "cityselect=region", // <-- This fixes the missing cityselect error!
-      minPrice ? `minAsk=${encodeURIComponent(minPrice)}` : "",
-      maxPrice ? `maxAsk=${encodeURIComponent(maxPrice)}` : "",
-      "cl=1", // Craigslist
-      "fbmarket=1", // Facebook Marketplace
-    ]
-      .filter(Boolean)
-      .join("&");
-    return {
-      name: `Craigslist & Facebook (All ${region.name}) via SearchTempest`,
-      url: `${baseUrl}?${params}`,
-    };
-  });
+  // Craigslist: one link per selected region/city
+  const craigslistLinks = regionObjs
+    .flatMap((region) =>
+      region.craigslist.map((subdomain) => {
+        let url = `https://${subdomain}.craigslist.org/search/sss?query=${encodeURIComponent(
+          searchTerms + " airplane"
+        )}`;
+        if (minPrice) url += `&min_price=${encodeURIComponent(minPrice)}`;
+        if (maxPrice) url += `&max_price=${encodeURIComponent(maxPrice)}`;
+        return {
+          name: `Craigslist (${region.name}: ${subdomain})`,
+          url,
+        };
+      })
+    );
+
+  // Facebook: one link per region's major city
+  const facebookLinks = regionObjs
+    .flatMap((region) =>
+      region.facebookCities.map((city) => {
+        // Facebook Marketplace does not support price in search URL, so only pass query and location
+        return {
+          name: `Facebook Marketplace (${city})`,
+          url: `https://www.facebook.com/marketplace/search/?query=${encodeURIComponent(
+            searchTerms + " airplane"
+          )}&location=${encodeURIComponent(city)}`,
+        };
+      })
+    );
 
   // For aviation classifieds, append region name for location context
   const regionNames = regionObjs.map((r) => r.name).join(" ");
@@ -82,7 +79,9 @@ function buildSearchLinks({
       tapParams.join("&"),
       "listing_id=",
       "search_type=aircraft",
-    ].filter(Boolean).join("&");
+    ]
+      .filter(Boolean)
+      .join("&");
 
   // Controller: Use the full classified search string
   const controllerUrl = classifiedSearch
@@ -104,7 +103,8 @@ function buildSearchLinks({
       name: "Controller",
       url: controllerUrl,
     },
-    ...searchTempestLinks,
+    ...craigslistLinks,
+    ...facebookLinks,
   ];
 }
 
@@ -192,7 +192,7 @@ export default function HomePage() {
             <div className="text-xs text-gray-400 mt-4 text-center">
               These links open the official sites with your search.
               <br />
-              Craigslist and Facebook links use SearchTempest to combine multiple cities/regions.
+              Craigslist and Facebook links are provided separately for each major city/area in your selected region(s).
             </div>
           </section>
         )}
