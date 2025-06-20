@@ -69,20 +69,15 @@ function buildSearchLinks({
         + (maxPrice ? `&max_price=${encodeURIComponent(maxPrice)}` : "")
       : "https://www.barnstormers.com/cat_search.php";
 
-  // Trade-A-Plane: Only include make/model if present
-  const tapParams = [];
+  // Trade-A-Plane: Only include make/model/type if present, avoid empty or unknown params
+  let tradeAPlaneUrl = "https://www.trade-a-plane.com/search";
+  const tapParams: string[] = [];
+  if (type) tapParams.push(`category_level1=${encodeURIComponent(type)}`);
   if (brand) tapParams.push(`make=${encodeURIComponent(brand)}`);
   if (model) tapParams.push(`model=${encodeURIComponent(model)}`);
-
-  const tradeAPlaneUrl =
-    "https://www.trade-a-plane.com/search?" +
-    [
-      tapParams.join("&"),
-      "listing_id=",
-      "search_type=aircraft",
-    ]
-      .filter(Boolean)
-      .join("&");
+  if (tapParams.length) {
+    tradeAPlaneUrl += "?" + tapParams.join("&");
+  }
 
   // Controller: Use the full classified search string
   const classifiedSearch = [brand, model, type, regionObjs.map((r) => r.name).join(" ")].filter(Boolean).join(" ");
