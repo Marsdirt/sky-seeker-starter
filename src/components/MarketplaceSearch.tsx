@@ -253,23 +253,40 @@ function buildSearchLinks({
     stateNames,
   });
 
-  // Trade-A-Plane: one link per selected state using zip/distance
-  const tradeAPlaneLinks = stateAbbrs
-    .filter(abbr => CRAIGSLIST_STATE_CITIES[abbr])
-    .map(abbr => {
-      const { zip } = CRAIGSLIST_STATE_CITIES[abbr];
-      return {
-        name: `Trade-A-Plane (${abbrToName[abbr]})`,
+  // Trade-A-Plane: nationwide if no state, else one link per selected state
+  let tradeAPlaneLinks: { name: string; url: string }[] = [];
+  if (stateAbbrs.length === 0) {
+    tradeAPlaneLinks = [
+      {
+        name: "Trade-A-Plane (Nationwide)",
         url: makeTradeAPlaneUrlByZip({
           brand,
           model,
           minPrice,
           maxPrice,
-          zip,
-          distance: 500,
+          zip: "",      // No zip for nationwide
+          distance: 0,  // No distance for nationwide
         }),
-      };
-    });
+      },
+    ];
+  } else {
+    tradeAPlaneLinks = stateAbbrs
+      .filter(abbr => CRAIGSLIST_STATE_CITIES[abbr])
+      .map(abbr => {
+        const { zip } = CRAIGSLIST_STATE_CITIES[abbr];
+        return {
+          name: `Trade-A-Plane (${abbrToName[abbr]})`,
+          url: makeTradeAPlaneUrlByZip({
+            brand,
+            model,
+            minPrice,
+            maxPrice,
+            zip,
+            distance: 500,
+          }),
+        };
+      });
+  }
 
   // Craigslist: one link per selected state
   const craigslistLinks = stateAbbrs
@@ -348,7 +365,12 @@ export default function MarketplaceSearch() {
     <div className="min-h-screen bg-gray-100 p-4">
       {/* Header */}
       <header className="flex items-center justify-center mb-8">
-        <span className="text-blue-500 text-3xl mr-2">✈️</span>
+        <img
+          src="/prop.png"
+          alt="Propeller"
+          className="w-16 h-16 mr-4"
+          style={{ objectFit: "contain" }}
+        />
         <span className="text-blue-600 text-4xl font-extrabold">
           Sky-Seeker
         </span>
@@ -424,7 +446,7 @@ export default function MarketplaceSearch() {
               {selectedStates.length === 0 ? (
                 <div className="text-xs text-yellow-600 mt-1 font-semibold">
                   Heads Up, Captain!<br />
-                  No state selected means we can’t scan your six for local deals on Craigslist, Facebook Marketplace, or Trade-A-Plane. Plot a course—pick a state!
+                  No state selected means we can’t scan your six for local deals on Craigslist or Facebook Marketplace. Plot a course—pick a state!
                 </div>
               ) : (
                 <div className="text-xs text-gray-500 mt-1">
@@ -481,6 +503,21 @@ export default function MarketplaceSearch() {
             </div>
           </section>
         )}
+      </div>
+
+      {/* Test for italics */}
+      {/* <div className="italic text-red-500">
+        This should be italic and red
+      </div> */}
+
+      {/* Tailwind test div */}
+      {/* <div className="bg-yellow-400 text-4xl italic text-red-500">
+        TAILWIND TEST
+      </div> */}
+
+      {/* Small print disclaimer */}
+      <div className="text-xs text-gray-400 mt-16 text-center font-serif italic">
+        Sky-Seeker isn’t partnered with any listing sites—we just help you find the good stuff.
       </div>
     </div>
   );
