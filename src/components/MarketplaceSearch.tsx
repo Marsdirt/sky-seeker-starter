@@ -93,12 +93,14 @@ function makeBarnstormersUrl({
   maxPrice: string;
   stateAbbrs: string[];
 }) {
+  // If only brand is provided and model is empty, use keyword search for off-brands
+  const isOffBrand = !!brand && !model;
   const params = [
     `headline=`,
     `body=`,
     `part_num=`,
-    `mfg=${encodeURIComponent(brand || "")}`,
-    `model=${encodeURIComponent(model || "")}`,
+    `mfg=${isOffBrand ? "" : encodeURIComponent(brand || "")}`,
+    `model=${isOffBrand ? "" : encodeURIComponent(model || "")}`,
     `user__profile__company=`,
     `user__last_name=`,
     `user__first_name=`,
@@ -111,8 +113,8 @@ function makeBarnstormersUrl({
     `my_cats__name=`,
     `price__gte=${encodeURIComponent(minPrice || "")}`,
     `price__lte=${encodeURIComponent(maxPrice || "")}`,
-    `search_type=advanced`,
-    `keyword=`,
+    `keyword=${isOffBrand ? encodeURIComponent(brand) : ""}`,
+    `search_type=${isOffBrand ? "keyword" : "advanced"}`,
   ];
   return "https://www.barnstormers.com/cat_search.php?" + params.join("&");
 }
@@ -217,6 +219,66 @@ function makeFacebookMarketplaceUrl({
   return url;
 }
 
+function makeAeroTraderUrl({
+  brand,
+  model,
+  minPrice,
+  maxPrice,
+  zip,
+  distance,
+}: {
+  brand: string;
+  model: string;
+  minPrice: string;
+  maxPrice: string;
+  zip?: string;
+  distance?: number;
+}) {
+  const brandCode = AEROTRADER_BRAND_CODES[brand.trim()];
+  let url = "https://www.aerotrader.com/aircraft-for-sale?";
+
+  // If brand is mapped, use make=Brand|Code and keyword=model
+  if (brand && brandCode) {
+    url += `make=${encodeURIComponent(brand)}%7C${brandCode}&`;
+    if (model) url += `keyword=${encodeURIComponent(model)}&`;
+  } else {
+    // If brand is not mapped, put brand+model in keyword
+    const keyword = [brand, model].filter(Boolean).join(" ");
+    if (keyword) url += `keyword=${encodeURIComponent(keyword)}&`;
+  }
+
+  if (minPrice || maxPrice) url += `price=${encodeURIComponent(`${minPrice || ""}:${maxPrice || ""}`)}&`;
+  if (zip && distance) url += `zip=${encodeURIComponent(zip)}&radius=${distance}&`;
+  return url.replace(/[&?]+$/, "");
+}
+
+function makeGlobalAirUrl({
+  brand,
+  model,
+  minPrice,
+  maxPrice,
+  stateAbbrs,
+}: {
+  brand: string;
+  model: string;
+  minPrice: string;
+  maxPrice: string;
+  stateAbbrs: string[];
+}) {
+  const searchTerms = [brand, model].filter(Boolean).join(" ");
+  const locationCodes = stateAbbrs
+    .map(abbr => GLOBALAIR_STATE_CODES[abbr])
+    .filter(Boolean)
+    .join(",");
+  let url = `https://www.globalair.com/aircraft-for-sale/${encodeURIComponent(searchTerms)}?`;
+  if (minPrice) url += `lowprice=${encodeURIComponent(minPrice)}&`;
+  if (maxPrice) url += `highprice=${encodeURIComponent(maxPrice)}&`;
+  url += "lowyear=&highyear=&lowtt=&hightt=&";
+  if (locationCodes) url += `locations=${locationCodes},&`;
+  // selclass left blank for broad search
+  return url.replace(/[&?]+$/, "");
+}
+
 function buildSearchLinks({
   brand,
   model,
@@ -282,7 +344,7 @@ function buildSearchLinks({
             minPrice,
             maxPrice,
             zip,
-            distance: 500,
+            distance: 350, // changed from 500 to 350
           }),
         };
       });
@@ -320,6 +382,51 @@ function buildSearchLinks({
       }),
     }));
 
+  // AeroTrader: nationwide if no state, else one link per selected state
+  let aeroTraderLinks: { name: string; url: string }[] = [];
+  if (stateAbbrs.length === 0) {
+    aeroTraderLinks = [
+      {
+        name: "AeroTrader (Nationwide)",
+        url: makeAeroTraderUrl({
+          brand,
+          model,
+          minPrice,
+          maxPrice,
+          zip: "80014",      // Denver area code
+          distance: 10000,   // Nationwide radius
+        }),
+      },
+    ];
+  } else {
+    // AeroTrader: state-based search
+    aeroTraderLinks = stateAbbrs
+      .filter(abbr => CRAIGSLIST_STATE_CITIES[abbr])
+      .map(abbr => {
+        const { zip } = CRAIGSLIST_STATE_CITIES[abbr];
+        return {
+          name: `AeroTrader (${abbrToName[abbr]})`,
+          url: makeAeroTraderUrl({
+            brand,
+            model,
+            minPrice,
+            maxPrice,
+            zip,
+            distance: 350, // changed from 500 to 350
+          }),
+        };
+      });
+  }
+
+  // GlobalAir: one link per selected state
+  const globalAirUrl = makeGlobalAirUrl({
+    brand,
+    model,
+    minPrice,
+    maxPrice,
+    stateAbbrs,
+  });
+
   return [
     {
       name: "Barnstormers",
@@ -330,6 +437,11 @@ function buildSearchLinks({
       url: controllerUrl,
     },
     ...tradeAPlaneLinks,
+    ...aeroTraderLinks,
+    {
+      name: "GlobalAir",
+      url: globalAirUrl,
+    },
     ...craigslistLinks,
     ...facebookLinks,
   ];
@@ -342,6 +454,7 @@ export default function MarketplaceSearch() {
   const [maxPrice, setMaxPrice] = useState("");
   const [selectedStates, setSelectedStates] = useState<{ value: string; label: string }[]>([]);
   const [showLinks, setShowLinks] = useState(false);
+  const [lastClickedUrl, setLastClickedUrl] = useState<string | null>(null);
 
   const handleSearch = () => setShowLinks(true);
   const handleReset = () => {
@@ -480,22 +593,29 @@ export default function MarketplaceSearch() {
               Search Results on Major Sites
             </h3>
             <ul className="space-y-3 max-h-[600px] overflow-y-auto">
-              {searchLinks.map((link) => (
-                <li key={link.url}>
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block bg-yellow-400 hover:bg-yellow-500 text-white rounded-lg px-4 py-2 font-semibold text-center transition"
-                  >
-                    {link.name}
-                  </a>
-                  {link.note && link.note !== "" && (
-                    <div className="text-xs text-red-500 mt-1 text-center">
-                      {link.note}
-                    </div>
-                  )}
-                </li>
+              {searchLinks.map((link, idx) => (
+                <React.Fragment key={link.url}>
+                  <li>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`block rounded-lg px-4 py-2 font-semibold text-center transition
+    ${lastClickedUrl === link.url
+      ? "bg-yellow-600 text-white ring-4 ring-yellow-300"
+      : "bg-yellow-400 hover:bg-yellow-500 text-white"}
+  `}
+                      onClick={() => setLastClickedUrl(link.url)}
+                    >
+                      {link.name}
+                    </a>
+                    {link.note && link.note !== "" && (
+                      <div className="text-xs text-red-500 mt-1 text-center">
+                        {link.note}
+                      </div>
+                    )}
+                  </li>
+                </React.Fragment>
               ))}
             </ul>
             <div className="text-xs text-gray-400 mt-4 text-center">
@@ -505,16 +625,6 @@ export default function MarketplaceSearch() {
         )}
       </div>
 
-      {/* Test for italics */}
-      {/* <div className="italic text-red-500">
-        This should be italic and red
-      </div> */}
-
-      {/* Tailwind test div */}
-      {/* <div className="bg-yellow-400 text-4xl italic text-red-500">
-        TAILWIND TEST
-      </div> */}
-
       {/* Small print disclaimer */}
       <div className="text-xs text-gray-400 mt-16 text-center font-serif italic">
         Sky-Seeker isn’t partnered with any listing sites—we just help you find the good stuff.
@@ -522,3 +632,71 @@ export default function MarketplaceSearch() {
     </div>
   );
 }
+
+const AEROTRADER_BRAND_CODES: Record<string, string> = {
+  Beechcraft: "2236348",
+  Aeronca: "2236142",
+  Piper: "2239732",
+  "Great Lakes": "2238310",
+  "American Champion": "2236256",
+  Boeing: "2236696",
+  Cessna: "2237190",
+  "Focke Wulf": "162255852",
+  Grumman: "2238364",
+  Other: "137947958",
+  "Zenair Ltd": "2241342",
+  // Add more as needed
+};
+
+const GLOBALAIR_STATE_CODES: Record<string, string> = {
+  AL: "1",
+  AK: "2",
+  AZ: "3",
+  AR: "4",
+  CA: "5",
+  CO: "6",
+  CT: "7",
+  DE: "8",
+  FL: "9",
+  GA: "10",
+  HI: "11",
+  ID: "12",
+  IL: "13",
+  IN: "14",
+  IA: "15",
+  KS: "16",
+  KY: "17",
+  LA: "18",
+  ME: "19",
+  MD: "20",
+  MA: "21",
+  MI: "22",
+  MN: "23",
+  MS: "24",
+  MO: "25",
+  MT: "26",
+  NE: "27",
+  NV: "28",
+  NH: "29",
+  NJ: "30",
+  NM: "31",
+  NY: "32",
+  NC: "33",
+  ND: "34",
+  OH: "35",
+  OK: "36",
+  OR: "37",
+  PA: "38",
+  RI: "40",
+  SC: "41",
+  SD: "42",
+  TN: "43",
+  TX: "44",
+  UT: "45",
+  VT: "46",
+  VA: "47",
+  WA: "48",
+  WV: "49",
+  WI: "50",
+  WY: "51",
+};
