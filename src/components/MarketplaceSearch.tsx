@@ -559,7 +559,7 @@ export default function MarketplaceSearch() {
               {selectedStates.length === 0 ? (
                 <div className="text-xs text-yellow-600 mt-1 font-semibold">
                   Heads Up, Captain!<br />
-                  No state selected means we can’t scan your six for local deals on Craigslist or Facebook Marketplace. Plot a course—pick a state!
+                  You can browse all listings, but if you want to spot local deals on Craigslist or Facebook Marketplace, set your heading for a state. No pressure—just better radar!
                 </div>
               ) : (
                 <div className="text-xs text-gray-500 mt-1">
