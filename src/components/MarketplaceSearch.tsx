@@ -806,7 +806,16 @@ function buildSearchLinks({
       }]
     : [];
 
-  return [
+  // AircraftDealer.com link (non-filtered, always shown under ASO)
+  // AircraftDealer.com expects plus signs between all words (brand+model+additional+info)
+  const aircraftDealerSearchVal = [brand, model].filter(Boolean).join(" ").replace(/\s+/g, "+");
+  const aircraftDealerLink = {
+    name: "AircraftDealer.com",
+    url: `https://aircraftdealer.com/view-ad-list.php?searchVal=${aircraftDealerSearchVal}`
+  };
+
+  // Insert AircraftDealer.com link after ASO (or at the end if ASO not present)
+  let links = [
     {
       name: "Barnstormers",
       url: barnstormersUrl,
@@ -825,6 +834,14 @@ function buildSearchLinks({
     ...facebookLinks,
     ...asoLinks,
   ];
+  // Find ASO index (should be last if present)
+  const asoIdx = links.findIndex(l => l.name === "Aircraft Shopper Online (ASO)");
+  if (asoIdx !== -1) {
+    links.splice(asoIdx + 1, 0, aircraftDealerLink);
+  } else {
+    links.push(aircraftDealerLink);
+  }
+  return links;
 }
 
 export default function MarketplaceSearch() {
@@ -855,8 +872,8 @@ export default function MarketplaceSearch() {
   });
 
   // ...existing code...
-  // Find index of first ASO link
-  const firstAsoIdx = searchLinks.findIndex(l => l.name === "Aircraft Shopper Online (ASO)");
+  // Find index of first unfiltered link (ASO or AircraftDealer.com)
+  const firstUnfilteredIdx = searchLinks.findIndex(l => l.name === "Aircraft Shopper Online (ASO)" || l.name === "AircraftDealer.com");
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -982,10 +999,10 @@ export default function MarketplaceSearch() {
             <ul className="space-y-3 max-h-[600px] overflow-y-auto">
               {searchLinks.map((link, idx) => (
                 <React.Fragment key={link.url || link.name || idx}>
-                  {firstAsoIdx === idx && (
+                  {firstUnfilteredIdx === idx && (
                     <li>
                       <div className="text-xs text-blue-700 font-bold text-center my-2">
-                        🛸 Heads up! The links above let you filter by price and location. The ASO link below is a wild ride—shows everything, everywhere, all at once. Buckle up!
+                        🛸 Heads up! The links below show everything, everywhere, all at once—no price or location filters. Buckle up!
                       </div>
                     </li>
                   )}
