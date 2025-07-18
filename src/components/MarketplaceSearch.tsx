@@ -752,6 +752,21 @@ function buildSearchLinks({
   function getAsoMgId(brand: string, model: string): number | null {
     const b = brand.trim().toLowerCase();
     const m = model.trim().toLowerCase();
+
+    // Special handling for Piper Cherokee variants
+    if (b === "piper") {
+      // Cherokee 180
+      if (/cherokee\s*180/.test(m)) return 213;
+      // Cherokee 235
+      if (/cherokee\s*235/.test(m)) return 214;
+      // Cherokee 6 or Six (case-insensitive)
+      if (/cherokee\s*(6|six)/i.test(model)) return 8;
+      // Cherokee 140, 150, 160 (all map to 210)
+      if (/cherokee\s*(140|150|160)/.test(m)) return 210;
+      // Generic Cherokee (no number)
+      if (m === "cherokee") return 210;
+    }
+
     // 1. Try to match brand+model mapping first
     for (const entry of ASO_MAPPINGS) {
       if (b === entry.brand && entry.models.length > 0) {
