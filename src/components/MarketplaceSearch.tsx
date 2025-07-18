@@ -753,6 +753,7 @@ function buildSearchLinks({
     const b = brand.trim().toLowerCase();
     const m = model.trim().toLowerCase();
 
+
     // Special handling for Piper Cherokee variants
     if (b === "piper") {
       // Cherokee 180
@@ -765,6 +766,18 @@ function buildSearchLinks({
       if (/cherokee\s*(140|150|160)/.test(m)) return 210;
       // Generic Cherokee (no number)
       if (m === "cherokee") return 210;
+    }
+
+    // Special handling for Mooney M20 variants (A, B, C, D, G)
+    if (b === "mooney") {
+      // M20A, M20B, M20C, M20D, M20G (case-insensitive, optional space or dash)
+      if (/m20[-\s]?a/i.test(model)) return 256;
+      if (/m20[-\s]?b/i.test(model)) return 256;
+      if (/m20[-\s]?c/i.test(model)) return 256;
+      if (/m20[-\s]?d/i.test(model)) return 256;
+      if (/m20[-\s]?g/i.test(model)) return 256;
+      // M20M through M20V (case-insensitive, optional space or dash)
+      if (/m20[-\s]?[m-v]/i.test(model)) return 184;
     }
 
     // 1. Try to match brand+model mapping first
