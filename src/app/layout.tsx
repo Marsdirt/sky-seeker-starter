@@ -25,6 +25,16 @@ export default function RootLayout({
         {/* Ezoic Header Script */}
         <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
         <script dangerouslySetInnerHTML={{ __html: `window.ezstandalone = window.ezstandalone || {}; ezstandalone.cmd = ezstandalone.cmd || [];` }} />
+        
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-2NV5DSYQKC"></script>
+        <script dangerouslySetInnerHTML={{ __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-2NV5DSYQKC');
+        ` }} />
+        
         {/* Google Font links are handled by next/font/google */}
       </head>
       <body className="font-body antialiased">
